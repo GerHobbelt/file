@@ -1,0 +1,18 @@
+LIBRARY magic1
+EXPORTS
+    magic_open
+    magic_close
+    magic_file
+    magic_error
+    magic_errno
+    magic_descriptor
+    magic_buffer
+    magic_setflags
+    magic_check
+    magic_compile
+    magic_list
+    magic_load
+    magic_load_buffers
+    magic_setparam
+    magic_getparam
+    magic_version

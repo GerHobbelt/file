@@ -37,6 +37,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include <config-win32.h>
+#endif
+
 #ifdef WIN32
   #ifdef _WIN64
     #define SIZE_T_FORMAT "I64"
