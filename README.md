@@ -44,8 +44,9 @@ The resulting binaries (both `file.exe` and `magic1.dll`) require two
 DLLs: `regex2.dll` and `zlib1.dll`.
 
 Once you have finished building, you should copy those DLLs from the
-win32/*-lib directories to the Release*\ and/or Debug*\ directories, as
-well as any other directories containing file-win32 binaries.
+`win32/*-lib` directories to the `Release*\` and/or `Debug*\`
+directories, as well as any other directories containing file-win32
+binaries.
 
 These binaries and support files are provided for your convenience.
 You may also build your own version of these support libraries and
