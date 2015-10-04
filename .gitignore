@@ -15,6 +15,11 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Dd]ebug DLL/
+[Dd]ebugPublic DLL/
+[Rr]elease DLL/
+[Rr]eleases DLL/
+[Gg]it[Hh]ub[Rr]eleases/
 x64/
 x86/
 build/
