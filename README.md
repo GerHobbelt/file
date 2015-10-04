@@ -114,5 +114,5 @@ As with the original tool, the license is the BSD 2-clause license.
     SUCH DAMAGE.
 
 [1]: https://github.com/alberthdev/file-win32/issues
-[2]: releases/
-[3]: archive/master.zip
+[2]: https://github.com/alberthdev/file-win32/releases/
+[3]: https://github.com/alberthdev/file-win32/archive/master.zip
