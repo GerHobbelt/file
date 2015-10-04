@@ -23,6 +23,17 @@ successfully built. In the future, we hope to improve and clean up the
 port in the future so that it may one day be an official part of the
 original file codebase.
 
+Download
+---------
+Binaries and source code are available on the [release page][2].
+
+A binary release includes the file tool executable, the libmagic DLL
+library, and the development files needed to link with the libmagic
+library.
+
+The latest source code from git can either be cloned via git, or
+downloaded [here][3].
+
 Requirements
 -------------
 **Visual Studio 2010** or higher is needed to build this port. It may
@@ -35,10 +46,14 @@ Building
 Simply open up win32\file.sln and build your preferred target(s)!
 Available targets are:
 
- * Release - file executable, no debugging symbols
+ * Release - file executable, no debugging symbols.
  * Debug - file executable, with debugging symbols
  * Release DLL - libmagic DLL, no debugging symbols
  * Debug DLL - libmagic DLL, with debugging symbols
+
+Note that `file.exe` (the file tool executable) does NOT require
+libmagic. You do not need to compile and include libmagic
+(`magic1.dll`) - the library is already embedded inside the tool.
 
 The resulting binaries (both `file.exe` and `magic1.dll`) require two
 DLLs: `regex2.dll` and `zlib1.dll`.
@@ -55,6 +70,11 @@ you decide to do so.
 
 We may remove these binaries in the future, in favor of developers
 providing their own binaries. Stay tuned...
+
+Finally, `magic.mgc` is not creatable on Windows at the moment. You
+need to build the source from a Linux machine to create this file.
+This file is required for the tool to work. For convenience, a
+pre-generated file is available on the [release page][2].
 
 Issues
 -------
@@ -94,3 +114,5 @@ As with the original tool, the license is the BSD 2-clause license.
     SUCH DAMAGE.
 
 [1]: https://github.com/alberthdev/file-win32/issues
+[2]: releases/
+[3]: archive/master.zip
