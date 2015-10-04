@@ -130,3 +130,4 @@ As with the original tool, the license is the BSD 2-clause license.
 [2]: https://github.com/alberthdev/file-win32/releases/
 [3]: https://github.com/alberthdev/file-win32/archive/master.zip
 [4]: https://github.com/ahupp/python-magic
+[@alberthdev]: https://github.com/alberthdev
