@@ -17,6 +17,15 @@ This port specifically allows for building natively on Visual Studio,
 removing the requirement for installing Cygwin or MinGW to build
 Windows binaries.
 
+This port was created out of frustration for finding the latest file
+magic DLL (`magic1.dll`) for [python-magic][4]. The old `magic1.dll`,
+found on the GNUWin32 project website, is several versions behind. It
+also doesn't support detecting newer Microsoft Office 2007+ files,
+which was necessary for my application. MinGW/MSYS2/Cygwin is rather
+unstable on my computer, with a lot of strange memory errors. Thus,
+the motivation for creating a "native", Visual Studio-compatible
+version of file!
+
 This port is a "dirty" port due to its extensive use of *nix shims and
 its inclusion of development libraries, which allow this tool to be
 successfully built. In the future, we hope to improve and clean up the
@@ -30,6 +39,10 @@ Binaries and source code are available on the [release page][2].
 A binary release includes the file tool executable, the libmagic DLL
 library, and the development files needed to link with the libmagic
 library.
+
+The library included with the binary release will work with
+[python-magic][4] - just drop the `magic1.dll` file into your script
+directory or your Python installation directory, and it should work.
 
 The latest source code from git can either be cloned via git, or
 downloaded [here][3].
@@ -116,3 +129,4 @@ As with the original tool, the license is the BSD 2-clause license.
 [1]: https://github.com/alberthdev/file-win32/issues
 [2]: https://github.com/alberthdev/file-win32/releases/
 [3]: https://github.com/alberthdev/file-win32/archive/master.zip
+[4]: https://github.com/ahupp/python-magic
