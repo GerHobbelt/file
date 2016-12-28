@@ -1,15 +1,16 @@
-file-win32
-===========
-[![Windows CI](https://ci.appveyor.com/api/projects/status/0ddmnhnua4lkoh7i/branch/master?svg=true)](https://ci.appveyor.com/project/alberthdev/file-win32/branch/master)
-
-Win32 native port of file by Albert Huang ([@alberthdev])
-
+file-win win32/x64
+==================
+Forked from the https://github.com/alberthdev/file-win32 which is the Win32 native port of file by Albert Huang ([@alberthdev])
 Original file tool and libmagic by Ian F. Darwin and others;
 maintained 1995-present by Christos Zoulas and others.
 
+Hosted: https://github.com/vookimedlo/file-win.
+
+Focusing on x64 architecture built by VS2015.
+
 About
 ------
-file-win32 is a dirty (but "native") win32 port of the original file
+file-win is a dirty (but "native") win32/x64 port of the original file
 tool (from http://www.darwinsys.com/file/) and corresponding libmagic
 library.
 
@@ -17,83 +18,52 @@ This port specifically allows for building natively on Visual Studio,
 removing the requirement for installing Cygwin or MinGW to build
 Windows binaries.
 
-This port was created out of frustration for finding the latest file
-magic DLL (`magic1.dll`) for [python-magic][4]. The old `magic1.dll`,
-found on the GNUWin32 project website, is several versions behind. It
-also doesn't support detecting newer Microsoft Office 2007+ files,
-which was necessary for my application. MinGW/MSYS2/Cygwin is rather
-unstable on my computer, with a lot of strange memory errors. Thus,
-the motivation for creating a "native", Visual Studio-compatible
-version of file!
+This port was created for other projects requiring magic1.dll built for
+win32 or x64 architecture. This was achieved by using the most recent
+version of [glibc regex2 library](https://github.com/vookimedlo/glibc-win/releases/tag/glibc-2.24-regex-vs2015) and [zlib library](https://github.com/vookimedlo/zlib/releases/tag/ZLIB_1_2_8__VS2015), which could be built for both architectures.
 
-This port is a "dirty" port due to its extensive use of *nix shims and
-its inclusion of development libraries, which allow this tool to be
-successfully built. In the future, we hope to improve and clean up the
-port in the future so that it may one day be an official part of the
-original file codebase.
+Unlike the Albert's binaries, these libraries haven't been tested with Python, but as a part of the C++ project.
+Python users, if you are fine just with the win32 architecture, please, use the [Albert's Win32 port.](https://github.com/alberthdev/file-win32)
 
 Download
 ---------
-Binaries and source code are available on the [release page][2].
+Binaries and source code are available on the [release page][1].
 
 A binary release includes the file tool executable, the libmagic DLL
 library, and the development files needed to link with the libmagic
 library.
 
-The library included with the binary release will work with
-[python-magic][4] - just drop the `magic1.dll` file into your script
-directory or your Python installation directory, and it should work.
-
-The latest source code from git can either be cloned via git, or
-downloaded [here][3].
-
-Requirements
+Toolchain
 -------------
-**Visual Studio 2010** or higher is needed to build this port. It may
-also build on Visual Studio 2008 (or earlier), but this has not been
-tested. If you are able to build this solution on earlier versions,
-please file an [issue][1] to let us know!
+Visual Studio 2015
 
 Building
 ---------
-Simply open up win32\file.sln and build your preferred target(s)!
+Simply open up win\file.sln and build your preferred target(s) either for win32 or x64 architecture.
 Available targets are:
 
- * Release - file executable, no debugging symbols.
- * Debug - file executable, with debugging symbols
- * Release DLL - libmagic DLL, no debugging symbols
- * Debug DLL - libmagic DLL, with debugging symbols
+ * Release EXE - file executable, no debugging symbols.
+ * Debug EXE - file executable, with debugging symbols
+ * Release - libmagic DLL, no debugging symbols
+ * Debug - libmagic DLL, with debugging symbols
+
+DLL targets use default Debug and Release target so you can include the project file into your own solution if you require to build the library as part of your build process.
 
 Note that `file.exe` (the file tool executable) does NOT require
-libmagic. You do not need to compile and include libmagic
-(`magic1.dll`) - the library is already embedded inside the tool.
+libmagic.
 
 The resulting binaries (both `file.exe` and `magic1.dll`) require two
-DLLs: `regex2.dll` and `zlib1.dll`.
+DLLs: [`regex2.dll`](https://github.com/vookimedlo/glibc-win/releases/tag/glibc-2.24-regex-vs2015) and [`zlib1.dll`](https://github.com/vookimedlo/zlib/releases/tag/ZLIB_1_2_8__VS2015).
 
 Once you have finished building, you should copy those DLLs from the
-`win32\*-lib` directories to the `Release*\` and/or `Debug*\`
-directories, as well as any other directories containing file-win32
+`win\*-lib` directories to the `Release*\` and/or `Debug*\`
+directories, as well as any other directories containing file-win
 binaries.
-
-These binaries and support files are provided for your convenience.
-You may also build your own version of these support libraries and
-link them with file-win32. Make sure to replace the target paths if
-you decide to do so.
-
-We may remove these binaries in the future, in favor of developers
-providing their own binaries. Stay tuned...
 
 Finally, `magic.mgc` is not creatable on Windows at the moment. You
 need to build the source from a Linux machine to create this file.
 This file is required for the tool to work. For convenience, a
-pre-generated file is available on the [release page][2].
-
-Issues
--------
-If you have problems building file-win32, have a suggestion, etc., we
-welcome you to file an [issue][1]! Remember to be as specific as
-possible about your problem or request.
+pre-generated file is available on the [release page][1].
 
 License
 --------
@@ -103,6 +73,7 @@ As with the original tool, the license is the BSD 2-clause license.
     Software written by Ian F. Darwin and others;
     maintained 1995-present by Christos Zoulas and others;
     win32 native (Visual Studio-compatible) port by Albert Huang and others.
+    x64 VS2015 port by Michal Duda
     
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
@@ -126,8 +97,5 @@ As with the original tool, the license is the BSD 2-clause license.
     OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
     SUCH DAMAGE.
 
-[1]: https://github.com/alberthdev/file-win32/issues
-[2]: https://github.com/alberthdev/file-win32/releases/
-[3]: https://github.com/alberthdev/file-win32/archive/master.zip
-[4]: https://github.com/ahupp/python-magic
+[1]: https://github.com/vookimedlo/file-win/releases
 [@alberthdev]: https://github.com/alberthdev
