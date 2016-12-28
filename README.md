@@ -1,6 +1,7 @@
 file-win win32/x64
 ==================
-Forked from the https://github.com/alberthdev/file-win32 which is the Win32 native port of file by Albert Huang ([@alberthdev])
+Forked from the https://github.com/alberthdev/file-win32 which is the Win32 native port of file by Albert Huang ([@alberthdev]).
+
 Original file tool and libmagic by Ian F. Darwin and others;
 maintained 1995-present by Christos Zoulas and others.
 
