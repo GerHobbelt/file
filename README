@@ -1,3 +1,10 @@
+## Docker build Instructions
+```
+cd docker
+./build.sh
+```
+bins will be created in bins/arch
+
 ## README for file(1) Command ##
 
     @(#) $File: README,v 1.56 2018/09/09 20:33:28 christos Exp $
