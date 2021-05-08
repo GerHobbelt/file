@@ -56,7 +56,7 @@ FILE_RCSID("@(#)$File: fsmagic.c,v 1.85 2022/12/26 17:31:14 christos Exp $")
 /* Might be defined in sys/types.h.  */
 # define HAVE_MAJOR
 #endif
-#ifdef WIN32
+#ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 #endif
@@ -129,7 +129,7 @@ file_fsmagic(struct magic_set *ms, const char *fn, struct stat *sb)
 #endif
 	ret = stat(fn, sb);	/* don't merge into if; see "ret =" above */
 
-#ifdef WIN32
+#ifdef _WIN32
 	{
 		HANDLE hFile = CreateFile((LPCSTR)fn, 0, FILE_SHARE_DELETE |
 		    FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,

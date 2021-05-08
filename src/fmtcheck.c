@@ -94,7 +94,7 @@ get_next_format_from_precision(const char **pf)
 		f++;
 		longdouble = 1;
 		break;
-#ifdef WIN32
+#ifdef _WIN32
 	case 'I':
 		f++;
 		if (!*f) RETURN(pf,f,FMTCHECK_UNKNOWN);

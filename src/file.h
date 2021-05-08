@@ -180,7 +180,7 @@ struct regmatch
 #define MAGIC "/etc/magic"
 #endif
 
-#if defined(__EMX__) || defined (WIN32)
+#if defined(__EMX__) || defined (_WIN32)
 #define PATHSEP	';'
 #else
 #define PATHSEP	':'
@@ -189,7 +189,7 @@ struct regmatch
 #define file_private static
 
 #if HAVE_VISIBILITY
-# if defined(WIN32)
+# if defined(_WIN32)
 #  define file_public  __declspec(dllexport)
 #  ifndef file_protected
 #   define file_protected

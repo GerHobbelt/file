@@ -171,7 +171,7 @@ cdf_ctime(const time_t *sec, char *buf)
 	char *ptr = *sec > MAX_CTIME ? NULL : ctime_r(sec, buf);
 	if (ptr != NULL)
 		return buf;
-#ifdef WIN32
+#ifdef _WIN32
 	(void)snprintf(buf, 26, "*Bad* 0x%16.16I64x\n",
 	    CAST(long long, *sec));
 #else
