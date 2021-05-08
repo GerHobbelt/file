@@ -147,6 +147,7 @@ struct regmatch
 #if defined(HAVE_XLOCALE_H)
 #include <xlocale.h>
 #endif
+#include <dirent.h>
 
 #define ENABLE_CONDITIONALS
 
