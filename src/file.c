@@ -218,6 +218,11 @@ int main(int argc, const char** argv)
 	_wildcard(&argc, &argv);
 #endif
 
+#ifdef _WIN32
+	if ((progname = strrchr(argv[0], '\\')) != NULL)
+		progname++;
+	else
+#endif
 	if ((progname = strrchr(argv[0], '/')) != NULL)
 		progname++;
 	else
