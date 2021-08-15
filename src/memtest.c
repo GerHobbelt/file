@@ -27,14 +27,18 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef WIN32
 #include <sys/mman.h>
+#endif
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <err.h>
 #include <fcntl.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <dlfcn.h>
 #include <magic.h>
 

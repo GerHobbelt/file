@@ -38,7 +38,9 @@ FILE_RCSID("@(#)$File: file.c,v 1.189 2021/02/05 21:33:49 christos Exp $")
 #include "magic.h"
 
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #ifdef RESTORE_TIME
 # if (__COHERENT__ >= 0x420)

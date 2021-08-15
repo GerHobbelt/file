@@ -79,7 +79,9 @@
 #include <stdio.h>	/* Include that here, to make sure __P gets defined */
 #include <errno.h>
 #include <fcntl.h>	/* For open and flags */
+#ifndef WIN32
 #include <regex.h>
+#endif
 #include <time.h>
 #include <sys/types.h>
 #ifndef WIN32
