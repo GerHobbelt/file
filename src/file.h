@@ -79,16 +79,20 @@
 #include <stdio.h>	/* Include that here, to make sure __P gets defined */
 #include <errno.h>
 #include <fcntl.h>	/* For open and flags */
-#ifndef WIN32
+#ifdef HAVE_REGEX_H
 #include <regex.h>
 #endif
 #include <time.h>
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
-#ifndef WIN32
+#endif
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
 /* Do this here and now, because struct stat gets re-defined on solaris */
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
+#endif
 #include <stdarg.h>
 
 #define ENABLE_CONDITIONALS

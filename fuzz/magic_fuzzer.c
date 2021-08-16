@@ -32,7 +32,9 @@ FILE_RCSID("@(#)$File: magic_fuzzer.c,v 1.1 2017/04/24 19:41:34 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
-#include <libgen.h>
+#ifdef HAVE_LIBGEN_H
+#include <libgen.h.h>
+#endif
 #include <stdlib.h>
 #include <err.h>
 
