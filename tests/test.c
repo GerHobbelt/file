@@ -69,8 +69,13 @@ slurp(FILE *fp, size_t *final_len)
 	return l;
 }
 
-int
-main(int argc, char **argv)
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      file_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv)
 {
 	struct magic_set *ms;
 	const char *result;

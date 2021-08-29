@@ -180,8 +180,12 @@ private void applyparam(magic_t);
 /*
  * main - parse arguments and handle options
  */
-int
-main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      file_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv)
 {
 	int c;
 	size_t i;
