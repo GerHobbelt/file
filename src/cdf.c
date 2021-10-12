@@ -35,7 +35,7 @@
 #include "file.h"
 
 #ifndef lint
-FILE_RCSID("@(#)$File: cdf.c,v 1.119 2021/09/17 17:44:07 christos Exp $")
+FILE_RCSID("@(#)$File: cdf.c,v 1.120 2021/09/24 13:59:19 christos Exp $")
 #endif
 
 #include <assert.h>
@@ -99,6 +99,8 @@ cdf_malloc(const char *file __attribute__((__unused__)),
 {
 	DPRINTF(("%s,%" SIZE_T_FORMAT "u: %s %" SIZE_T_FORMAT "u\n",
 	    file, line, __func__, n));
+	if (n == 0)
+	    n++;
 	return malloc(n);
 }
 
@@ -119,6 +121,8 @@ cdf_calloc(const char *file __attribute__((__unused__)),
 {
 	DPRINTF(("%s,%" SIZE_T_FORMAT "u: %s %" SIZE_T_FORMAT "u %"
 	    SIZE_T_FORMAT "u\n", file, line, __func__, n, u));
+	if (n == 0)
+	    n++;
 	return calloc(n, u);
 }
 

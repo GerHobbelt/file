@@ -80,8 +80,8 @@ int main(int argc, const char** argv)
 	struct magic_set *ms;
 	const char *result;
 	size_t result_len, desired_len;
-	char *desired;
-	int i, e = EXIT_FAILURE;
+	char *desired = NULL;
+	int e = EXIT_FAILURE;
 	FILE *fp;
 
 
@@ -136,6 +136,7 @@ int main(int argc, const char** argv)
 	}
 	e = 0;
 bad:
+	free(desired);
 	magic_close(ms);
 	return e;
 }

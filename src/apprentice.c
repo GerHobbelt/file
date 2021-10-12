@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: apprentice.c,v 1.307 2021/07/13 05:06:48 christos Exp $")
+FILE_RCSID("@(#)$File: apprentice.c,v 1.309 2021/09/24 13:59:19 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
@@ -1342,6 +1342,12 @@ coalesce_entries(struct magic_set *ms, struct magic_entry *me, uint32_t nme,
 
 	for (i = 0; i < nme; i++)
 		mentrycount += me[i].cont_count;
+
+	if (mentrycount == 0) {
+		*ma = NULL;
+		*nma = 0;
+		return 0;
+	}
 
 	slen = sizeof(**ma) * mentrycount;
 	if ((*ma = CAST(struct magic *, malloc(slen))) == NULL) {
@@ -3427,9 +3433,7 @@ file_varint2uintmax_t(const unsigned char *us, int t, size_t *l)
                         x <<= 7;
                 }
         } else {
-printf("start: ");
                 for (c = us; *c; c++) {
-printf("%.2x ", *c);
 			x |= *c & 0x7f;
 			if ((*c & 0x80) == 0)
 				break;
@@ -3437,7 +3441,6 @@ printf("%.2x ", *c);
                 }
 		if (l)
 			*l = c - us + 1;
-printf(" end %zu, %ju\n", *l, x);
         }
 	return x;
 }
