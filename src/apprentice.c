@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: apprentice.c,v 1.312 2021/10/24 15:52:18 christos Exp $")
+FILE_RCSID("@(#)$File: apprentice.c,v 1.315 2021/10/28 16:15:14 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
@@ -1204,19 +1204,20 @@ addentry(struct magic_set *ms, struct magic_entry *me,
    struct magic_entry_set *mset)
 {
 	size_t i = me->mp->type == FILE_NAME ? 1 : 0;
-	if (mset[i].count == mset[i].max) {
+	if (mset[i].me == NULL || mset[i].count == mset[i].max) {
 		struct magic_entry *mp;
 
-		mset[i].max += ALLOC_INCR;
+		size_t incr = mset[i].max + ALLOC_INCR;
 		if ((mp = CAST(struct magic_entry *,
-		    realloc(mset[i].me, sizeof(*mp) * mset[i].max))) ==
+		    realloc(mset[i].me, sizeof(*mp) * incr))) ==
 		    NULL) {
-			file_oomem(ms, sizeof(*mp) * mset[i].max);
+			file_oomem(ms, sizeof(*mp) * incr);
 			return -1;
 		}
 		(void)memset(&mp[mset[i].count], 0, sizeof(*mp) *
 		    ALLOC_INCR);
 		mset[i].me = mp;
+		mset[i].max = incr;
 	}
 	mset[i].me[mset[i].count++] = *me;
 	memset(me, 0, sizeof(*me));
@@ -2461,11 +2462,9 @@ private int
 parse_apple(struct magic_set *ms, struct magic_entry *me, const char *line,
     size_t len)
 {
-	struct magic *m = &me->mp[0];
-
 	return parse_extra(ms, me, line, len,
 	    CAST(off_t, offsetof(struct magic, apple)),
-	    sizeof(m->apple), "APPLE", "!+-./?", 0);
+	    sizeof(me->mp[0].apple), "APPLE", "!+-./?", 0);
 }
 
 /*
@@ -2475,11 +2474,9 @@ private int
 parse_ext(struct magic_set *ms, struct magic_entry *me, const char *line,
     size_t len)
 {
-	struct magic *m = &me->mp[0];
-
 	return parse_extra(ms, me, line, len,
 	    CAST(off_t, offsetof(struct magic, ext)),
-	    sizeof(m->ext), "EXTENSION", ",!+-/@?_$&", 0); /* & for b&w */
+	    sizeof(me->mp[0].ext), "EXTENSION", ",!+-/@?_$&", 0); /* & for b&w */
 }
 
 /*
@@ -2490,11 +2487,9 @@ private int
 parse_mime(struct magic_set *ms, struct magic_entry *me, const char *line,
     size_t len)
 {
-	struct magic *m = &me->mp[0];
-
 	return parse_extra(ms, me, line, len,
 	    CAST(off_t, offsetof(struct magic, mimetype)),
-	    sizeof(m->mimetype), "MIME", "+-/.$?:{}", 1);
+	    sizeof(me->mp[0].mimetype), "MIME", "+-/.$?:{}", 1);
 }
 
 private int

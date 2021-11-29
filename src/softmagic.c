@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: softmagic.c,v 1.316 2021/10/24 15:52:18 christos Exp $")
+FILE_RCSID("@(#)$File: softmagic.c,v 1.318 2021/10/28 16:17:05 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
@@ -436,7 +436,6 @@ flush:
 				    &ms->c.li[cont_level].off)) {
 				case -1:
 				case 0:
-					flush = 1;
 					cont_level--;
 					break;
 				default:
@@ -1848,6 +1847,7 @@ mget(struct magic_set *ms, struct magic *m, const struct buffer *b,
 		bb = *b;
 		bb.fbuf = s + offset;
 		bb.flen = nbytes - offset;
+		rv = -1;
 		for (mlp = ms->mlist[0]->next; mlp != ms->mlist[0];
 		    mlp = mlp->next)
 		{
