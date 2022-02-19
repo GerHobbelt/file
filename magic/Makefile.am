@@ -1,5 +1,5 @@
 #
-# $File: Makefile.am,v 1.174 2022/01/08 16:29:18 christos Exp $
+# $File: Makefile.am,v 1.177 2022/02/15 13:00:34 christos Exp $
 #
 MAGIC_FRAGMENT_BASE = Magdir
 MAGIC_DIR = $(top_srcdir)/magic
@@ -59,6 +59,7 @@ $(MAGIC_FRAGMENT_DIR)/c64 \
 $(MAGIC_FRAGMENT_DIR)/cad \
 $(MAGIC_FRAGMENT_DIR)/cafebabe \
 $(MAGIC_FRAGMENT_DIR)/cbor \
+$(MAGIC_FRAGMENT_DIR)/ccf \
 $(MAGIC_FRAGMENT_DIR)/cddb \
 $(MAGIC_FRAGMENT_DIR)/chord \
 $(MAGIC_FRAGMENT_DIR)/cisco \
@@ -208,6 +209,7 @@ $(MAGIC_FRAGMENT_DIR)/netbsd \
 $(MAGIC_FRAGMENT_DIR)/netscape \
 $(MAGIC_FRAGMENT_DIR)/netware \
 $(MAGIC_FRAGMENT_DIR)/news \
+$(MAGIC_FRAGMENT_DIR)/nifty \
 $(MAGIC_FRAGMENT_DIR)/nim-lang \
 $(MAGIC_FRAGMENT_DIR)/nitpicker \
 $(MAGIC_FRAGMENT_DIR)/numpy \
@@ -218,6 +220,7 @@ $(MAGIC_FRAGMENT_DIR)/ole2compounddocs \
 $(MAGIC_FRAGMENT_DIR)/olf \
 $(MAGIC_FRAGMENT_DIR)/openfst \
 $(MAGIC_FRAGMENT_DIR)/opentimestamps \
+$(MAGIC_FRAGMENT_DIR)/oric \
 $(MAGIC_FRAGMENT_DIR)/os2 \
 $(MAGIC_FRAGMENT_DIR)/os400 \
 $(MAGIC_FRAGMENT_DIR)/os9 \
