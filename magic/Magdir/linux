@@ -166,6 +166,13 @@
 >0x1e3		string	Loading		version 1.3.79 or older
 >0x1e9		string	Loading		from prehistoric times
 
+# Linux kernel boot images (LoongArch)
+0x38		string	LA64        Linux kernel
+>(0x3c.l+4)	leshort	0x6232		LoongArch 32-bit boot executable,
+>(0x3c.l+4)	leshort	0x6264		LoongArch 64-bit boot executable,
+>>526	lelong		>0
+>>>(526.s+0x200) string	>\0		version %s
+
 # System.map files - Nicolas Lichtmaier <nick@debian.org>
 8	search/1	\ A\ _text	Linux kernel symbol map text
 
