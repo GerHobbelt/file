@@ -1,3 +1,19 @@
+2022-07-26  11:10  Christos Zoulas <christos@zoulas.com>
+
+	* Fix bug with large flist (Florian Weimer)
+
+2022-07-07  13:21  Christos Zoulas <christos@zoulas.com>
+
+        * PR/364: Detect non-nul-terminated core filenames from QEMU
+	  (mam-ableton)
+
+2022-07-04  15:45  Christos Zoulas <christos@zoulas.com>
+
+	* PR/359: Add support for http://ndjson.org/ (darose)
+	* PR/362: Fix wide printing (ro-ee)
+	* PR/358: Fix width for -f - (jpalus)
+	* PR/356: Fix JSON constant parsing (davewhite)
+
 2022-06-10   9:40  Christos Zoulas <christos@zoulas.com>
 
 	* release 5.42
