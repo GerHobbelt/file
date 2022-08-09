@@ -1,6 +1,6 @@
 
 #------------------------------------------------------------------------------
-# $File: ole2compounddocs,v 1.15 2022/04/18 21:54:42 christos Exp $
+# $File: ole2compounddocs,v 1.18 2022/05/31 17:38:36 christos Exp $
 # Microsoft OLE 2 Compound Documents : file(1) magic for Microsoft Structured
 # storage (https://en.wikipedia.org/wiki/Compound_File_Binary_Format)
 # Additional tests for OLE 2 Compound Documents should be under this recipe.
@@ -199,6 +199,22 @@
 #!:mime	application/x-ole-storage
 !:mime	application/x-ms-info
 !:ext	nfo
+#
+# From:		Joerg Jenderek
+# URL:		https://en.wikipedia.org/wiki/Microsoft_Access
+# Reference:	http://mark0.net/download/triddefs_xml.7z/defs/m/mdz.trid.xml
+#		http://fileformats.archiveteam.org/wiki/Microsoft_Compound_File
+# Note:		only version foo tested and called "Microsoft Access Wizard template" by TrID
+# Fourth directory entry name TemplateID
+>>>>384 	lestring16	TemplateID		: Microsoft Access wizard template
+# Second directory entry name like \005SummaryInformation and 3rd name like \005DocumentSummaryInformation
+#!:mime	application/x-ole-storage
+#!:mime	application/vnd.ms-office
+#!:mime	application/vnd.ms-access
+#!:mime	application/msaccess
+!:mime	application/x-ms-mdz
+# http://extension.nirsoft.net/mdz
+!:ext	mdz
 #
 # URL:	http://fileformats.archiveteam.org/wiki/Corel_Print_House
 # Second directory entry name Thumbnail
@@ -439,6 +455,19 @@
 # /autostart/template
 !:ext	ppt/pps/pot
 # From:		Joerg Jenderek
+# URL:		https://www.file-extensions.org/ppa-file-extension
+#		https://en.wikipedia.org/wiki/Microsoft_PowerPoint#cite_note-231
+# Reference:	http://fileformats.archiveteam.org/wiki/Microsoft_Compound_File
+>>88 	ubequad		0x871800aa0060263b	: Microsoft
+# only version 8 (97) tested; PowerPoint 4.0 to 11.0 (2004) (Wikipedia); 97 to 2003 (file-extensions.org)
+>>>80 	ubequad		0xf04672810a72cf11	PowerPoint Addin or Wizard
+# second, third and fourth directory entry name like VBA PROJECT PROJECTwm
+# http://extension.nirsoft.net/pwz
+!:mime	application/vnd.ms-powerpoint
+# like: BSHPPT97.PPA "AutoContent Wizard.pwz"
+!:ext	ppa/pwz
+#
+# From:		Joerg Jenderek
 # URL:		http://fileformats.archiveteam.org/wiki/AWD_(At_Work_Document)
 # Reference:	http://mark0.net/download/triddefs_xml.7z/defs/a/awd-fax.trid.xml
 # Note:		called "Microsoft At Work Fax document" by TrID
@@ -454,6 +483,20 @@
 >>>80 	ubequad		0x3a8fb774c8c8d111	Project
 !:mime	application/vnd.ms-project
 !:ext	mpp
+# From:		Joerg Jenderek
+# URL:		https://en.wikipedia.org/wiki/Microsoft_Office_shared_tools#Binder
+# Reference:	http://mark0.net/download/triddefs_xml.7z/defs/o/obd.trid.xml
+#		http://fileformats.archiveteam.org/wiki/Microsoft_Compound_File
+# Note:		only version 8 tested and called "Office Binder Document" by TrID and
+#		"Microsoft Office Binder File for Windows" version 97-2000 by DROID fmt/240
+>>88 	ubequad		0xb21c00aa004ba90b	: Microsoft
+>>>80 	ubequad		0x0004855964661b10	Office Binder Document, Template or wizard
+# second directory entry name like Binder
+# https://www.file-extensions.org/obd-file-extension
+#!:mime	application/vnd.ms-binder
+!:mime	application/x-msbinder
+# obt for template; obz for Microsoft Office Binder wizard
+!:ext	obd/obt/obz
 #
 # URL:		http://fileformats.archiveteam.org/wiki/WordPerfect
 # Reference:	http://fileformats.archiveteam.org/wiki/Microsoft_Compound_File

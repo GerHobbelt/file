@@ -1,6 +1,6 @@
 
 #------------------------------------------------------------------------------
-# $File: images,v 1.215 2022/05/09 18:35:22 christos Exp $
+# $File: images,v 1.223 2022/05/14 20:05:09 christos Exp $
 # images:  file(1) magic for image formats (see also "iff", and "c-lang" for
 # XPM bitmaps)
 #
@@ -2437,6 +2437,185 @@
 >8		ubelong		x		%dx
 >12		ubelong		x		\b%d
 
+# Type: Microsoft DirectDraw Surface (DXGI formats)
+# URL:	https://msdn.microsoft.com/library/default.asp?url=/library/en-us/directx9_c/directx/graphics/reference/DDSFileReference/ddsfileformat.asp
+# From: Morten Hustveit <morten@debian.org>
+# Updated by: David Korth <gerbilsoft@gerbilsoft.com>
+0	name	ms-directdraw-dx10
+>0	ulelong	x	\b, DXGI format:
+>0	ulelong	1	R32G32B32A32_TYPELESS
+>0	ulelong	2	R32G32B32A32_FLOAT
+>0	ulelong	3	R32G32B32A32_UINT
+>0	ulelong	4	R32G32B32A32_SINT
+>0	ulelong	5	R32G32B32_TYPELESS
+>0	ulelong	6	R32G32B32_FLOAT
+>0	ulelong	7	R32G32B32_UINT
+>0	ulelong	8	R32G32B32_SINT
+>0	ulelong	9	R16G16B16A16_TYPELESS
+>0	ulelong	10	R16G16B16A16_FLOAT
+>0	ulelong	11	R16G16B16A16_UNORM
+>0	ulelong	12	R16G16B16A16_UINT
+>0	ulelong	13	R16G16B16A16_SNORM
+>0	ulelong	14	R16G16B16A16_SINT
+>0	ulelong	15	R32G32_TYPELESS
+>0	ulelong	16	R32G32_FLOAT
+>0	ulelong	17	R32G32_UINT
+>0	ulelong	18	R32G32_SINT
+>0	ulelong	19	R32G8X24_TYPELESS
+>0	ulelong	20	D32_FLOAT_S8X24_UINT
+>0	ulelong	21	R32_FLOAT_X8X24_TYPELESS
+>0	ulelong	22	X32_TYPELESS_G8X24_UINT
+>0	ulelong	23	R10G10B10A2_TYPELESS
+>0	ulelong	24	R10G10B10A2_UNORM
+>0	ulelong	25	R10G10B10A2_UINT
+>0	ulelong	26	R11G11B10_FLOAT
+>0	ulelong	27	R8G8B8A8_TYPELESS
+>0	ulelong	28	R8G8B8A8_UNORM
+>0	ulelong	29	R8G8B8A8_UNORM_SRGB
+>0	ulelong	30	R8G8B8A8_UINT
+>0	ulelong	31	R8G8B8A8_SNORM
+>0	ulelong	32	R8G8B8A8_SINT
+>0	ulelong	33	R16G16_TYPELESS
+>0	ulelong	34	R16G16_FLOAT
+>0	ulelong	35	R16G16_UNORM
+>0	ulelong	36	R16G16_UINT
+>0	ulelong	37	R16G16_SNORM
+>0	ulelong	38	R16G16_SINT
+>0	ulelong	39	R32_TYPELESS
+>0	ulelong	40	D32_FLOAT
+>0	ulelong	41	R32_FLOAT
+>0	ulelong	42	R32_UINT
+>0	ulelong	43	R32_SINT
+>0	ulelong	44	R24G8_TYPELESS
+>0	ulelong	45	D24_UNORM_S8_UINT
+>0	ulelong	46	R24_UNORM_X8_TYPELESS
+>0	ulelong	47	X24_TYPELESS_G8_UINT
+>0	ulelong	48	R8G8_TYPELESS
+>0	ulelong	49	R8G8_UNORM
+>0	ulelong	50	R8G8_UINT
+>0	ulelong	51	R8G8_SNORM
+>0	ulelong	52	R8G8_SINT
+>0	ulelong	53	R16_TYPELESS
+>0	ulelong	54	R16_FLOAT
+>0	ulelong	55	D16_UNORM
+>0	ulelong	56	R16_UNORM
+>0	ulelong	57	R16_UINT
+>0	ulelong	58	R16_SNORM
+>0	ulelong	59	R16_SINT
+>0	ulelong	60	R8_TYPELESS
+>0	ulelong	61	R8_UNORM
+>0	ulelong	62	R8_UINT
+>0	ulelong	63	R8_SNORM
+>0	ulelong	64	R8_SINT
+>0	ulelong	65	A8_UNORM
+>0	ulelong	66	R1_UNORM
+>0	ulelong	67	R9G9B9E5_SHAREDEXP
+>0	ulelong	68	R8G8_B8G8_UNORM
+>0	ulelong	69	G8R8_G8B8_UNORM
+>0	ulelong	70	BC1_TYPELESS
+>0	ulelong	71	BC1_UNORM
+>0	ulelong	72	BC1_UNORM_SRGB
+>0	ulelong	73	BC2_TYPELESS
+>0	ulelong	74	BC2_UNORM
+>0	ulelong	75	BC2_UNORM_SRGB
+>0	ulelong	76	BC3_TYPELESS
+>0	ulelong	77	BC3_UNORM
+>0	ulelong	78	BC3_UNORM_SRGB
+>0	ulelong	79	BC4_TYPELESS
+>0	ulelong	80	BC4_UNORM
+>0	ulelong	81	BC4_SNORM
+>0	ulelong	82	BC5_TYPELESS
+>0	ulelong	83	BC5_UNORM
+>0	ulelong	84	BC5_SNORM
+>0	ulelong	85	B5G6R5_UNORM
+>0	ulelong	86	B5G5R5A1_UNORM
+>0	ulelong	87	B8G8R8A8_UNORM
+>0	ulelong	88	B8G8R8X8_UNORM
+>0	ulelong	89	R10G10B10_XR_BIAS_A2_UNORM
+>0	ulelong	90	B8G8R8A8_TYPELESS
+>0	ulelong	91	B8G8R8A8_UNORM_SRGB
+>0	ulelong	92	B8G8R8X8_TYPELESS
+>0	ulelong	93	B8G8R8X8_UNORM_SRGB
+>0	ulelong	94	BC6H_TYPELESS
+>0	ulelong	95	BC6H_UF16
+>0	ulelong	96	BC6H_SF16
+>0	ulelong	97	BC7_TYPELESS
+>0	ulelong	98	BC7_UNORM
+>0	ulelong	99	BC7_UNORM_SRGB
+>0	ulelong	100	AYUV
+>0	ulelong	101	Y410
+>0	ulelong	102	Y416
+>0	ulelong	103	NV12
+>0	ulelong	104	P010
+>0	ulelong	105	P016
+>0	ulelong	106	420_OPAQUE
+>0	ulelong	107	YUY2
+>0	ulelong	108	Y210
+>0	ulelong	109	Y216
+>0	ulelong	110	NV11
+>0	ulelong	111	AI44
+>0	ulelong	112	IA44
+>0	ulelong	113	P8
+>0	ulelong	114	A8P8
+>0	ulelong	115	B4G4R4A4_UNORM
+
+>0	ulelong	116	XBOX_R10G10B10_7E3_A2_FLOAT
+>0	ulelong	117	XBOX_R10G10B10_6E4_A2_FLOAT
+>0	ulelong	118	XBOX_D16_UNORM_S8_UINT
+>0	ulelong	119	XBOX_R16_UNORM_X8_TYPELESS
+>0	ulelong	120	XBOX_X16_TYPELESS_G8_UINT
+
+>0	ulelong	130	DXGI_FORMAT_P208
+>0	ulelong	131	DXGI_FORMAT_V208
+>0	ulelong	132	DXGI_FORMAT_V408
+
+>0	ulelong	133	ASTC_4X4_TYPELESS
+>0	ulelong	134	ASTC_4X4_UNORM
+>0	ulelong	135	ASTC_4X4_UNORM_SRGB
+>0	ulelong	137	ASTC_5X4_TYPELESS
+>0	ulelong	138	ASTC_5X4_UNORM
+>0	ulelong	139	ASTC_5X4_UNORM_SRGB
+>0	ulelong	141	ASTC_5X5_TYPELESS
+>0	ulelong	142	ASTC_5X5_UNORM
+>0	ulelong	143	ASTC_5X5_UNORM_SRGB
+>0	ulelong	145	ASTC_6X5_TYPELESS
+>0	ulelong	146	ASTC_6X5_UNORM
+>0	ulelong	147	ASTC_6X5_UNORM_SRGB
+>0	ulelong	149	ASTC_6X6_TYPELESS
+>0	ulelong	150	ASTC_6X6_UNORM
+>0	ulelong	151	ASTC_6X6_UNORM_SRGB
+>0	ulelong	153	ASTC_8X5_TYPELESS
+>0	ulelong	154	ASTC_8X5_UNORM
+>0	ulelong	155	ASTC_8X5_UNORM_SRGB
+>0	ulelong	157	ASTC_8X6_TYPELESS
+>0	ulelong	158	ASTC_8X6_UNORM
+>0	ulelong	159	ASTC_8X6_UNORM_SRGB
+>0	ulelong	161	ASTC_8X8_TYPELESS
+>0	ulelong	162	ASTC_8X8_UNORM
+>0	ulelong	163	ASTC_8X8_UNORM_SRGB
+>0	ulelong	165	ASTC_10X5_TYPELESS
+>0	ulelong	166	ASTC_10X5_UNORM
+>0	ulelong	167	ASTC_10X5_UNORM_SRGB
+>0	ulelong	169	ASTC_10X6_TYPELESS
+>0	ulelong	170	ASTC_10X6_UNORM
+>0	ulelong	171	ASTC_10X6_UNORM_SRGB
+>0	ulelong	173	ASTC_10X8_TYPELESS
+>0	ulelong	174	ASTC_10X8_UNORM
+>0	ulelong	175	ASTC_10X8_UNORM_SRGB
+>0	ulelong	177	ASTC_10X10_TYPELESS
+>0	ulelong	178	ASTC_10X10_UNORM
+>0	ulelong	179	ASTC_10X10_UNORM_SRGB
+>0	ulelong	181	ASTC_12X10_TYPELESS
+>0	ulelong	182	ASTC_12X10_UNORM
+>0	ulelong	183	ASTC_12X10_UNORM_SRGB
+>0	ulelong	185	ASTC_12X12_TYPELESS
+>0	ulelong	186	ASTC_12X12_UNORM
+>0	ulelong	187	ASTC_12X12_UNORM_SRGB
+
+>0	ulelong	190	XBOX_R10G10B10_SNORM_A2_UNORM
+>0	ulelong	189	XBOX_R4G4_UNORM
+>0	ulelong	0xFFFFFFFF	DXGI_FORMAT_FORCE_UINT
+
 # Type: Microsoft DirectDraw Surface (common data)
 # URL:	https://msdn.microsoft.com/library/default.asp?url=/library/en-us/directx9_c/directx/graphics/reference/DDSFileReference/ddsfileformat.asp
 # From: Morten Hustveit <morten@debian.org>
@@ -2449,7 +2628,9 @@
 # Determine the pixel format.
 >0x50	ulelong&0x4	4
 # FIXME: Handle DX10 and XBOX formats.
->>0x54	string	x			\b, compressed using %.4s
+>>0x54	string	DX10
+>>>0x80	use	ms-directdraw-dx10
+>>0x54	string	!DX10			\b, compressed using %.4s
 >0x50	ulelong&0x2	0x2		\b, alpha only
 >0x50	ulelong&0x200	0x200		\b, YUV
 >0x50	ulelong&0x20000	0x20000		\b, luminance
@@ -3496,3 +3677,140 @@
 >>>13	ubyte		1	(all channels linear)
 >>13	default		x
 >>>13	ubyte		x	*bad colorspace %u*
+
+
+# Type: Godot 3, 4 texture (pixel format)
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+0	name	godot-pixel-format
+>0	ulelong&0xFFFFF	0	L8
+>0	ulelong&0xFFFFF	1	LA8
+>0	ulelong&0xFFFFF	2	R8
+>0	ulelong&0xFFFFF	3	RG8
+>0	ulelong&0xFFFFF	4	RGB8
+>0	ulelong&0xFFFFF	5	RGBA8
+>0	ulelong&0xFFFFF	6	RGBA4444
+>0	ulelong&0xFFFFF	7	RGB565
+>0	ulelong&0xFFFFF	8	RF
+>0	ulelong&0xFFFFF	9	RGF
+>0	ulelong&0xFFFFF	10	RGBF
+>0	ulelong&0xFFFFF	11	RGBAF
+>0	ulelong&0xFFFFF	12	RH
+>0	ulelong&0xFFFFF	13	RGH
+>0	ulelong&0xFFFFF	14	RGBH
+>0	ulelong&0xFFFFF	15	RGBAH
+>0	ulelong&0xFFFFF	16	RGBE9995
+>0	ulelong&0xFFFFF	17	DXT1
+>0	ulelong&0xFFFFF	18	DXT3
+>0	ulelong&0xFFFFF	19	DXT5
+>0	ulelong&0xFFFFF	20	RGTC_R
+>0	ulelong&0xFFFFF	21	RGTC_RG
+>0	ulelong&0xFFFFF	22	BPTC_RGBA
+>0	ulelong&0xFFFFF	23	BPTC_RGBF
+>0	ulelong&0xFFFFF	24	BPTC_RGBFU
+>0	ulelong&0xFFFFF	25	PVRTC1_2
+>0	ulelong&0xFFFFF	26	PVRTC1_2A
+>0	ulelong&0xFFFFF	27	PVRTC1_4
+>0	ulelong&0xFFFFF	28	PVRTC1_4A
+>0	ulelong&0xFFFFF	29	ETC
+>0	ulelong&0xFFFFF	30	ETC2_R11
+>0	ulelong&0xFFFFF	31	ETC2_R11S
+>0	ulelong&0xFFFFF	32	ETC2_RG11
+>0	ulelong&0xFFFFF	33	ETC2_RG11S
+>0	ulelong&0xFFFFF	34	ETC2_RGB8
+>0	ulelong&0xFFFFF	35	ETC2_RGBA8
+>0	ulelong&0xFFFFF	36	ETC2_RGB8A1
+>0	ulelong&0xFFFFF	37	ASTC_8x8
+
+# Type: Godot 3, 4 texture (rescale display, width)
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+# Shows rescale value if it's not a power of 2.
+0	name	godot-rescale-display-w
+>0	uleshort	0
+>0	uleshort	1
+>0	uleshort	2
+>0	uleshort	4
+>0	uleshort	8
+>0	uleshort	16
+>0	uleshort	32
+>0	uleshort	64
+>0	uleshort	128
+>0	uleshort	256
+>0	uleshort	512
+>0	uleshort	1024
+>0	uleshort	2048
+>0	uleshort	4096
+>0	uleshort	8192
+>0	uleshort	16384
+>0	uleshort	32768
+>0	default		x
+>>0	uleshort	x	(rescale to %u x
+
+# Type: Godot 3, 4 texture (rescale display, height)
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+# Shows rescale value if it's not a power of 2.
+0	name	godot-rescale-display-h
+>0	clear	x
+>0	uleshort	0
+>0	uleshort	1
+>0	uleshort	2
+>0	uleshort	4
+>0	uleshort	8
+>0	uleshort	16
+>0	uleshort	32
+>0	uleshort	64
+>0	uleshort	128
+>0	uleshort	256
+>0	uleshort	512
+>0	uleshort	1024
+>0	uleshort	2048
+>0	uleshort	4096
+>0	uleshort	8192
+>0	uleshort	16384
+>0	uleshort	32768
+>0	default		x
+>>0	uleshort	x	%u)
+
+# Type: Godot 3 texture
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+# References:
+# - https://github.com/godotengine/godot/blob/3.3/core/image.h
+# - https://github.com/godotengine/godot/blob/3.3/scene/resources/texture.cpp
+# - https://github.com/godotengine/godot/blob/3.3/scene/resources/texture.h
+# TODO: Don't show "rescale to" if it matches the image size.
+0	string	GDST	Godot 3 texture:
+!:ext	stex
+!:mime	image/x-godot-stex
+>4	uleshort	x	%u x
+>8	uleshort	x	%u
+>6	uleshort	0	\b,
+>6	uleshort	!0
+>>6	use	godot-rescale-display-w
+>>10	use	godot-rescale-display-h
+>>10	uleshort	x	\b,
+>16	ulelong&0x800000	!0		has mipmaps,
+>16	ulelong&0x100000	0x100000	lossless encoding
+>16	ulelong&0x200000	0x200000	lossy encoding
+>16	ulelong&0x300000	0
+>>16	use	godot-pixel-format
+
+# Type: Godot 4 texture
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+# References:
+# - https://github.com/godotengine/godot/blob/master/core/io/image.h
+# - https://github.com/godotengine/godot/blob/master/scene/resources/texture.cpp
+# - https://github.com/godotengine/godot/blob/master/scene/resources/texture.h
+# TODO: Don't show "rescale to" if it matches the image size.
+0	string	GST2	Godot 4 texture
+!:ext	stex
+!:mime	image/x-godot-stex
+>4	ulelong		x	v%u:
+>0x28	uleshort	x	%u x
+>0x2A	uleshort	x	%u
+>8	use	godot-rescale-display-w
+>12	use	godot-rescale-display-h
+>12	uleshort	x	\b,
+>0x2C	ulelong		>1	%u mipmaps,
+>0x30	use	godot-pixel-format
+>0x24	ulelong		1	\b, embedded PNG image
+>0x24	ulelong		2	\b, embedded WebP image
+>0x24	ulelong		3	\b, Basis Universal

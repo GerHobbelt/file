@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: file.c,v 1.193 2022/04/18 21:42:34 christos Exp $")
+FILE_RCSID("@(#)$File: file.c,v 1.195 2022/06/02 15:45:43 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
@@ -58,6 +58,9 @@ FILE_RCSID("@(#)$File: file.c,v 1.193 2022/04/18 21:42:34 christos Exp $")
 #endif
 #ifdef HAVE_WCHAR_H
 #include <wchar.h>
+#endif
+#ifdef HAVE_WCTYPE_H
+#include <wctype.h>
 #endif
 
 #if defined(HAVE_GETOPT_H) && defined(HAVE_STRUCT_OPTION)
@@ -419,7 +422,7 @@ int main(int argc, const char** argv)
 
 	for (wid = 0, j = CAST(size_t, optind); j < CAST(size_t, argc);
 	    j++) {
-		nw = file_mbswidth(argv[j]);
+		nw = file_mbswidth(magic, argv[j]);
 		if (nw > wid)
 			wid = nw;
 	}
@@ -522,7 +525,7 @@ unwrap(struct magic_set *ms, const char *fn)
 		while ((len = getline(&line, &llen, f)) > 0) {
 			if (line[len - 1] == '\n')
 				line[len - 1] = '\0';
-			cwid = file_mbswidth(line);
+			cwid = file_mbswidth(ms, line);
 			if (cwid > wid)
 				wid = cwid;
 		}
@@ -550,15 +553,21 @@ process(struct magic_set *ms, const char *inname, int wid)
 	const char *type, c = nulsep > 1 ? '\0' : '\n';
 	int std_in = strcmp(inname, "-") == 0;
 	int haderror = 0;
+	size_t plen = 4 * wid + 1;
+	char *pbuf, *pname;
+
+	if ((pbuf = CAST(char *, malloc(plen))) == NULL)
+	    file_err(EXIT_FAILURE, "Can't allocate %zu bytes", plen);
 
 	if (wid > 0 && !bflag) {
-		(void)printf("%s", std_in ? "/dev/stdin" : inname);
+		pname = file_printable(ms, pbuf, plen, inname, wid);
+		(void)printf("%s", std_in ? "/dev/stdin" : pname);
 		if (nulsep)
 			(void)putc('\0', stdout);
 		if (nulsep < 2) {
 			(void)printf("%s", separator);
 			(void)printf("%*s ", CAST(int, nopad ? 0
-			    : (wid - file_mbswidth(inname))), "");
+			    : (wid - file_mbswidth(ms, inname))), "");
 		}
 	}
 
@@ -571,14 +580,17 @@ process(struct magic_set *ms, const char *inname, int wid)
 	}
 	if (nobuffer)
 		haderror |= fflush(stdout) != 0;
+	free(pbuf);
 	return haderror || type == NULL;
 }
 
 protected size_t
-file_mbswidth(const char *s)
+file_mbswidth(struct magic_set *ms, const char *s)
 {
-#if defined(HAVE_WCHAR_H) && defined(HAVE_MBRTOWC) && defined(HAVE_WCWIDTH)
-	size_t bytesconsumed, old_n, n, width = 0;
+	size_t width = 0;
+#if defined(HAVE_WCHAR_H) && defined(HAVE_MBRTOWC) && defined(HAVE_WCWIDTH) && \
+   defined(HAVE_WCTYPE_H)
+	size_t bytesconsumed, old_n, n;
 	mbstate_t state;
 	wchar_t nextchar;
 	(void)memset(&state, 0, sizeof(mbstate_t));
@@ -591,22 +603,18 @@ file_mbswidth(const char *s)
 			/* Something went wrong, return something reasonable */
 			return old_n;
 		}
-		if (s[0] == '\n') {
-			/*
-			 * do what strlen() would do, so that caller
-			 * is always right
-			 */
-			width++;
-		} else {
-			int w = wcwidth(nextchar);
-			if (w > 0)
-				width += w;
-		}
+		width += ((ms->flags & MAGIC_RAW) != 0
+		    || iswprint(nextchar)) ? wcwidth(nextchar) : 4;
 
 		s += bytesconsumed, n -= bytesconsumed;
 	}
 	return width;
 #else
+	while (*s) {
+		width += (ms->flags & MAGIC_RAW) != 0
+		    || isprint(CAST(unsigned char, *s)) ? 1 : 4;
+	}
+
 	return strlen(s);
 #endif
 }
