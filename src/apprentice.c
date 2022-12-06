@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: apprentice.c,v 1.327 2022/09/16 13:45:31 christos Exp $")
+FILE_RCSID("@(#)$File: apprentice.c,v 1.330 2022/09/20 21:00:57 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
@@ -2434,6 +2434,7 @@ parse_strength(struct magic_set *ms, struct magic_entry *me, const char *line,
 	const char *l = line;
 	char *el;
 	unsigned long factor;
+	char sbuf[512];
 	struct magic *m = &me->mp[0];
 
 	if (m->factor_op != FILE_FACTOR_OP_NONE) {
@@ -2444,12 +2445,15 @@ parse_strength(struct magic_set *ms, struct magic_entry *me, const char *line,
 	}
 	if (m->type == FILE_NAME) {
 		file_magwarn(ms, "%s: Strength setting is not supported in "
-		    "\"name\" magic entries", m->value.s);
+		    "\"name\" magic entries",
+		    file_printable(ms, sbuf, sizeof(sbuf), m->value.s,
+		    sizeof(m->value.s)));
 		return -1;
 	}
 	EATAB;
 	switch (*l) {
 	case FILE_FACTOR_OP_NONE:
+		break;
 	case FILE_FACTOR_OP_PLUS:
 	case FILE_FACTOR_OP_MINUS:
 	case FILE_FACTOR_OP_TIMES:
@@ -2574,6 +2578,35 @@ parse_mime(struct magic_set *ms, struct magic_entry *me, const char *line,
 	return parse_extra(ms, me, line, len,
 	    CAST(off_t, offsetof(struct magic, mimetype)),
 	    sizeof(me->mp[0].mimetype), "MIME", "+-/.$?:{}", 1);
+}
+
+private int
+check_regex(struct magic_set *ms, struct magic *m)
+{
+	char sbuf[512];
+	size_t i;
+
+	for (i = 0; i < sizeof(m->value.s); i++) {
+		unsigned char c = m->value.s[i];
+		if (c == '\0')
+			break;
+		if (isprint(c) || isspace(c) || c == '\b'
+		    || c == 0x8a) // XXX: apple magic fixme
+			continue;
+		file_magwarn(ms,
+		    "non-ascii characters in regex \\%#o `%s'",
+		    c, file_printable(ms, sbuf, sizeof(sbuf),
+		    m->value.s, sizeof(m->value.s)));
+		return -1;
+	}
+	if (i == sizeof(m->value.s)) {
+		file_magwarn(ms,
+		    "unterminated regex `%s'",
+		    file_printable(ms, sbuf, sizeof(sbuf),
+		    m->value.s, sizeof(m->value.s)));
+		return -1;
+	}
+	return 0;
 }
 
 private int
@@ -2852,8 +2885,10 @@ getvalue(struct magic_set *ms, struct magic *m, const char **p, int action)
 		}
 		if (m->type == FILE_REGEX) {
 			file_regex_t rx;
-			int rc = file_regcomp(ms, &rx, m->value.s,
-			    REG_EXTENDED);
+			int rc;
+			if (check_regex(ms, m))
+				return -1;
+			rc = file_regcomp(ms, &rx, m->value.s, REG_EXTENDED);
 			if (rc == 0) {
 				file_regfree(&rx);
 			}
@@ -2898,6 +2933,7 @@ getvalue(struct magic_set *ms, struct magic *m, const char **p, int action)
 		m->value.q = file_signextend(ms, m, ull);
 		if (*p == ep) {
 			file_magwarn(ms, "Unparsable number `%s'", *p);
+			return -1;
 		} else {
 			size_t ts = typesize(m->type);
 			uint64_t x;
@@ -2907,6 +2943,7 @@ getvalue(struct magic_set *ms, struct magic *m, const char **p, int action)
 				file_magwarn(ms,
 				    "Expected numeric type got `%s'",
 				    type_tbl[m->type].name);
+				return -1;
 			}
 			for (q = *p; isspace(CAST(unsigned char, *q)); q++)
 				continue;
@@ -2933,6 +2970,7 @@ getvalue(struct magic_set *ms, struct magic *m, const char **p, int action)
 				file_magwarn(ms, "Overflow for numeric"
 				    " type `%s' value %#" PRIx64,
 				    type_tbl[m->type].name, ull);
+				return -1;
 			}
 		}
 		if (errno == 0) {
