@@ -35,7 +35,7 @@
 #include "file.h"
 
 #ifndef lint
-FILE_RCSID("@(#)$File: compress.c,v 1.141 2022/09/20 20:36:11 christos Exp $")
+FILE_RCSID("@(#)$File: compress.c,v 1.144 2022/09/21 11:47:24 christos Exp $")
 #endif
 
 #include "magic.h"
@@ -623,8 +623,10 @@ uncompresszlib(const unsigned char *old, unsigned char **newch,
 		goto err;
 
 	rc = inflate(&z, Z_SYNC_FLUSH);
-	if (rc != Z_OK && rc != Z_STREAM_END)
+	if (rc != Z_OK && rc != Z_STREAM_END) {
+		inflateEnd(&z);
 		goto err;
+	}
 
 	*n = CAST(size_t, z.total_out);
 	rc = inflateEnd(&z);
@@ -663,8 +665,10 @@ uncompressbzlib(const unsigned char *old, unsigned char **newch,
 	bz.avail_out = CAST(unsigned int, bytes_max);
 
 	rc = BZ2_bzDecompress(&bz);
-	if (rc != BZ_OK && rc != BZ_STREAM_END)
+	if (rc != BZ_OK && rc != BZ_STREAM_END) {
+		BZ2_bzDecompressEnd(&bz);
 		goto err;
+	}
 
 	/* Assume byte_max is within 32bit */
 	/* assert(bz.total_out_hi32 == 0); */
@@ -887,7 +891,7 @@ movedesc(void *v, int i, int fd)
 #else
 	if (dup2(fd, i) == -1) {
 		DPRINTF("dup(%d, %d) failed (%s)\n", fd, i, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	close(v ? fd : fd);
 #endif
@@ -944,15 +948,15 @@ writechild(int fd, const void *old, size_t n)
 	pid = fork();
 	if (pid == -1) {
 		DPRINTF("Fork failed (%s)\n", strerror(errno));
-		exit(1);
+		return -1;
 	}
 	if (pid == 0) {
 		/* child */
 		if (swrite(fd, old, n) != CAST(ssize_t, n)) {
 			DPRINTF("Write failed (%s)\n", strerror(errno));
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	/* parent */
 	return pid;
@@ -1129,7 +1133,7 @@ uncompressbuf(int fd, size_t bytes_max, size_t method, int nofork,
 		(void)execvp(compr[method].argv[0], args);
 		dprintf(STDERR_FILENO, "exec `%s' failed, %s",
 		    compr[method].argv[0], strerror(errno));
-		_exit(1); /* _exit(), not exit(), because of vfork */
+		_exit(EXIT_FAILURE); /* _exit(), not exit(), because of vfork */
 	}
 #endif
 	/* parent */
@@ -1140,6 +1144,11 @@ uncompressbuf(int fd, size_t bytes_max, size_t method, int nofork,
 	if (fd == -1) {
 		closefd(fdp[STDIN_FILENO], 0);
 		writepid = writechild(fdp[STDIN_FILENO][1], old, *n);
+		if (writepid == (pid_t)-1) {
+			rv = makeerror(newch, n, "Write to child failed, %s",
+			    strerror(errno));
+			goto err;
+		}
 		closefd(fdp[STDIN_FILENO], 1);
 	}
 
