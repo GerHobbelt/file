@@ -27,7 +27,7 @@
 #include "file.h"
 
 #ifndef lint
-FILE_RCSID("@(#)$File: readelf.c,v 1.182 2022/07/31 16:01:01 christos Exp $")
+FILE_RCSID("@(#)$File: readelf.c,v 1.184 2022/09/22 13:42:34 christos Exp $")
 #endif
 
 #ifdef BUILTIN_ELF
@@ -451,6 +451,10 @@ do_note_netbsd_version(struct magic_set *ms, int swap, void *v)
 
 		if (file_printf(ms, " %u.%u", ver_maj, ver_min) == -1)
 			return -1;
+		if (ver_maj >= 9) {
+			ver_patch += 100 * ver_rel;
+			ver_rel = 0;
+		}
 		if (ver_rel == 0 && ver_patch != 0) {
 			if (file_printf(ms, ".%u", ver_patch) == -1)
 				return -1;
@@ -460,8 +464,7 @@ do_note_netbsd_version(struct magic_set *ms, int swap, void *v)
 					return -1;
 				ver_rel -= 26;
 			}
-			if (file_printf(ms, "%c", 'A' + ver_rel - 1)
-			    == -1)
+			if (file_printf(ms, "%c", 'A' + ver_rel - 1) == -1)
 				return -1;
 		}
 	}
