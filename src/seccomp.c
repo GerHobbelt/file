@@ -27,7 +27,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: seccomp.c,v 1.22 2022/07/30 16:49:18 christos Exp $")
+FILE_RCSID("@(#)$File: seccomp.c,v 1.24 2022/09/24 20:30:13 christos Exp $")
 #endif	/* lint */
 
 #if HAVE_LIBSECCOMP

@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef lint
-FILE_RCSID("@(#)$File: is_json.c,v 1.27 2022/09/16 14:15:29 christos Exp $")
+FILE_RCSID("@(#)$File: is_json.c,v 1.29 2022/09/24 20:30:13 christos Exp $")
 #endif
 
 #include "magic.h"

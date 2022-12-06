@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef lint
-FILE_RCSID("@(#)$File: is_csv.c,v 1.8 2022/09/16 14:15:29 christos Exp $")
+FILE_RCSID("@(#)$File: is_csv.c,v 1.10 2022/09/24 20:30:13 christos Exp $")
 #endif
 
 #include <string.h>

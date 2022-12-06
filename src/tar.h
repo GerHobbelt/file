@@ -32,7 +32,7 @@
  *
  * Created 25 August 1985 by John Gilmore, ihnp4!hoptoad!gnu.
  *
- * $File: tar.h,v 1.13 2010/11/30 14:58:53 rrt Exp $ # checkin only
+ * $File: tar.h,v 1.15 2022/09/24 20:30:13 christos Exp $ # checkin only
  */
 
 /*

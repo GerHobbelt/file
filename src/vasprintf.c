@@ -108,7 +108,7 @@ you use strange formats.
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: vasprintf.c,v 1.21 2022/09/16 13:49:39 christos Exp $")
+FILE_RCSID("@(#)$File: vasprintf.c,v 1.23 2022/09/24 20:30:13 christos Exp $")
 #endif	/* lint */
 
 #include <assert.h>
