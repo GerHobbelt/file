@@ -1,3 +1,20 @@
+2022-09-15  13:50  Christos Zoulas <christos@zoulas.com>
+
+	* Add MAGIC_NO_COMPRESS_FORK and use it to produce a more
+	  meaningful error message if we are sandboxing.
+
+2022-09-15  10:45  Christos Zoulas <christos@zoulas.com>
+
+	* Add built-in lzip decompression support (Michal Gorny)
+
+2022-09-14  10:35  Christos Zoulas <christos@zoulas.com>
+
+	* Add built-in zstd decompression support (Martin Rodriguez Reboredo)
+
+2022-09-13  14:55  Christos Zoulas <christos@zoulas.com>
+
+	* release 5.43
+
 2022-09-10   9:17  Christos Zoulas <christos@zoulas.com>
 
 	* Add octal indirect magic (Michal Gorny)

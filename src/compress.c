@@ -35,7 +35,7 @@
 #include "file.h"
 
 #ifndef lint
-FILE_RCSID("@(#)$File: compress.c,v 1.136 2022/09/13 16:08:34 christos Exp $")
+FILE_RCSID("@(#)$File: compress.c,v 1.139 2022/09/15 16:54:14 christos Exp $")
 #endif
 
 #include "magic.h"
@@ -77,6 +77,17 @@ typedef void (*sig_t)(int);
 #if defined(HAVE_LZMA_H) && defined(XZLIBSUPPORT)
 #define BUILTIN_XZLIB
 #include <lzma.h>
+#endif
+
+#if defined(HAVE_ZSTD_H) && defined(ZSTDLIBSUPPORT)
+#define BUILTIN_ZSTDLIB
+#include <zstd.h>
+#include <zstd_errors.h>
+#endif
+
+#if defined(HAVE_LZLIB_H) && defined(LZLIBSUPPORT)
+#define BUILTIN_LZLIB
+#include <lzlib.h>
 #endif
 
 #ifdef DEBUG
@@ -175,6 +186,8 @@ private const struct {
 #define METH_FROZEN	2
 #define METH_BZIP	7
 #define METH_XZ		9
+#define METH_LZIP	8
+#define METH_ZSTD	12
 #define METH_LZMA	13
 #define METH_ZLIB	14
     { { .magic = "\037\235" },	2, gzip_args, NULL },	/* 0, compressed */
@@ -207,7 +220,7 @@ private const struct {
 private ssize_t swrite(int, const void *, size_t);
 #if HAVE_FORK
 private size_t ncompr = __arraycount(compr);
-private int uncompressbuf(int, size_t, size_t, const unsigned char *,
+private int uncompressbuf(int, size_t, size_t, int, const unsigned char *,
     unsigned char **, size_t *);
 #ifdef BUILTIN_DECOMPRESS
 private int uncompresszlib(const unsigned char *, unsigned char **, size_t,
@@ -221,6 +234,14 @@ private int uncompressbzlib(const unsigned char *, unsigned char **, size_t,
 #endif
 #ifdef BUILTIN_XZLIB
 private int uncompressxzlib(const unsigned char *, unsigned char **, size_t,
+    size_t *);
+#endif
+#ifdef BUILTIN_ZSTDLIB
+private int uncompresszstd(const unsigned char *, unsigned char **, size_t,
+    size_t *);
+#endif
+#ifdef BUILTIN_LZLIB
+private int uncompresslzlib(const unsigned char *, unsigned char **, size_t,
     size_t *);
 #endif
 
@@ -287,7 +308,8 @@ file_zmagic(struct magic_set *ms, const struct buffer *b, const char *name)
 		}
 
 		nsz = nbytes;
-		urv = uncompressbuf(fd, ms->bytes_max, i, buf, &newbuf, &nsz);
+		urv = uncompressbuf(fd, ms->bytes_max, i, 
+		    (ms->flags & MAGIC_NO_COMPRESS_FORK), buf, &newbuf, &nsz);
 		DPRINTF("uncompressbuf = %d, %s, %" SIZE_T_FORMAT "u\n", urv,
 		    (char *)newbuf, nsz);
 		switch (urv) {
@@ -608,9 +630,8 @@ uncompresszlib(const unsigned char *old, unsigned char **newch,
 
 	return OKDATA;
 err:
-	strlcpy(RCAST(char *, *newch), z.msg ? z.msg : zError(rc), bytes_max);
-	*n = strlen(RCAST(char *, *newch));
-	return ERRDATA;
+	free(*newch);
+	return makeerror(newch, n, "%s", z.msg ? z.msg : zError(rc));
 }
 #endif
 
@@ -651,9 +672,8 @@ uncompressbzlib(const unsigned char *old, unsigned char **newch,
 
 	return OKDATA;
 err:
-	snprintf(RCAST(char *, *newch), bytes_max, "bunzip error %d", rc);
-	*n = strlen(RCAST(char *, *newch));
-	return ERRDATA;
+	free(*newch);
+	return makeerror(newch, n, "bunzip error %d", rc);
 }
 #endif
 
@@ -691,9 +711,123 @@ uncompressxzlib(const unsigned char *old, unsigned char **newch,
 
 	return OKDATA;
 err:
-	snprintf(RCAST(char *, *newch), bytes_max, "unxz error %d", rc);
-	*n = strlen(RCAST(char *, *newch));
-	return ERRDATA;
+	free(*newch);
+	return makeerror(newch, n, "unxz error %d", rc);
+}
+#endif
+
+#ifdef BUILTIN_ZSTDLIB
+private int
+uncompresszstd(const unsigned char *old, unsigned char **newch,
+    size_t bytes_max, size_t *n)
+{
+    size_t rc;
+    ZSTD_DStream *zstd;
+    ZSTD_inBuffer in;
+    ZSTD_outBuffer out;
+
+    if ((zstd = ZSTD_createDStream()) == NULL)
+        return makeerror(newch, n, "No ZSTD decompression stream, %s",
+	    strerror(errno));
+
+    rc = ZSTD_DCtx_reset(zstd, ZSTD_reset_session_only);
+    if (ZSTD_isError(rc))
+        goto err;
+
+    if ((*newch = CAST(unsigned char *, malloc(bytes_max + 1))) == NULL) {
+        ZSTD_freeDStream(zstd);
+        return makeerror(newch, n, "No buffer, %s", strerror(errno));
+    }
+
+    in.src = CCAST(const void *, old);
+    in.size = *n;
+    in.pos = 0;
+    out.dst = RCAST(void *, *newch);
+    out.size = bytes_max;
+    out.pos = 0;
+
+    rc = ZSTD_decompressStream(zstd, &out, &in);
+    if (ZSTD_isError(rc))
+        goto err;
+
+    *n = out.pos;
+
+    ZSTD_freeDStream(zstd);
+
+    /* let's keep the nul-terminate tradition */
+    (*newch)[*n] = '\0';
+
+    return OKDATA;
+err:
+    ZSTD_freeDStream(zstd);
+    free(*newch);
+    return makeerror(newch, n, "zstd error %d", ZSTD_getErrorCode(rc));
+}
+#endif
+
+#ifdef BUILTIN_LZLIB
+private int
+uncompresslzlib(const unsigned char *old, unsigned char **newch,
+    size_t bytes_max, size_t *n)
+{
+    enum LZ_Errno err;
+    size_t old_remaining = *n;
+    size_t new_remaining = bytes_max;
+    size_t total_read = 0;
+    unsigned char *bufp;
+    struct LZ_Decoder *dec;
+
+    if ((*newch = CAST(unsigned char *, malloc(bytes_max + 1))) == NULL)
+        return makeerror(newch, n, "No buffer, %s", strerror(errno));
+    bufp = *newch;
+
+    dec = LZ_decompress_open();
+    if (!dec) {
+        free(*newch);
+        return makeerror(newch, n, "unable to allocate LZ_Decoder");
+    }
+    if (LZ_decompress_errno(dec) != LZ_ok)
+        goto err;
+
+    for (;;) {
+        // LZ_decompress_read() stops at member boundaries, so we may
+        // have more than one successful read after writing all data
+        // we have.
+        if (old_remaining > 0) {
+            int wr = LZ_decompress_write(dec, old, old_remaining);
+            if (wr < 0)
+                goto err;
+            old_remaining -= wr;
+            old += wr;
+        }
+
+        int rd = LZ_decompress_read(dec, bufp, new_remaining);
+        if (rd > 0) {
+            new_remaining -= rd;
+            bufp += rd;
+            total_read += rd;
+        }
+
+        if (rd < 0 || LZ_decompress_errno(dec) != LZ_ok)
+            goto err;
+        if (new_remaining == 0)
+            break;
+        if (old_remaining == 0 && rd == 0)
+            break;
+    }
+
+    LZ_decompress_close(dec);
+    *n = total_read;
+
+    /* let's keep the nul-terminate tradition */
+    *bufp = '\0';
+
+    return OKDATA;
+err:
+    err = LZ_decompress_errno(dec);
+    LZ_decompress_close(dec);
+    free(*newch);
+    return makeerror(newch, n, "lzlib error: %s", LZ_strerror(err));
 }
 #endif
 
@@ -864,14 +998,22 @@ methodname(size_t method)
 	case METH_LZMA:
 		return "xzlib";
 #endif
+#ifdef BUILTIN_ZSTDLIB
+	case METH_ZSTD:
+		return "zstd";
+#endif
+#ifdef BUILTIN_LZLIB
+	case METH_LZIP:
+		return "lzlib";
+#endif
 	default:
 		return compr[method].argv[0];
 	}
 }
 
 private int
-uncompressbuf(int fd, size_t bytes_max, size_t method, const unsigned char *old,
-    unsigned char **newch, size_t* n)
+uncompressbuf(int fd, size_t bytes_max, size_t method, int nofork,
+    const unsigned char *old, unsigned char **newch, size_t* n)
 {
 	int fdp[3][2];
 	int status, rv, w;
@@ -900,8 +1042,21 @@ uncompressbuf(int fd, size_t bytes_max, size_t method, const unsigned char *old,
 	case METH_LZMA:
 		return uncompressxzlib(old, newch, bytes_max, n);
 #endif
+#ifdef BUILTIN_ZSTDLIB
+	case METH_ZSTD:
+		return uncompresszstd(old, newch, bytes_max, n);
+#endif
+#ifdef BUILTIN_LZLIB
+	case METH_LZIP:
+		return uncompresslzlib(old, newch, bytes_max, n);
+#endif
 	default:
 		break;
+	}
+
+	if (nofork) {
+	    return makeerror(newch, n,
+		"Fork is required to uncompress, but disabled");
 	}
 
 	(void)fflush(stdout);
