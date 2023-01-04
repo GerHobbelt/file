@@ -367,5 +367,6 @@
 >7	byte		16		(FenixOS)
 >7	byte		17		(Nuxi CloudABI)
 >7	byte		97		(ARM)
+>7	byte		102		(Cell LV2)
 >7	byte		202		(Cafe OS)
 >7	byte		255		(embedded)
