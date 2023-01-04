@@ -107,7 +107,7 @@ if (NOT HAVE_SIGHANDLER_T)
   if (HAVE_SIG_T)
     add_definitions(-Dsighandler_t=sig_t)
   else()
-    message(FATAL_ERROR "Platform defines neither sig_t nor sighandler_t")
+    message(ERROR "Platform defines neither sig_t nor sighandler_t")
   endif()
 endif()
 
