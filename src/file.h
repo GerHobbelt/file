@@ -33,7 +33,56 @@
 #ifndef __file_h__
 #define __file_h__
 
-#ifdef HAVE_CONFIG_H
+#if defined(_MSC_VER)
+#include "magic_msvc_config.h"
+
+#ifndef _CRT_NONSTDC_NO_WARNINGS
+#define _CRT_NONSTDC_NO_WARNINGS
+#endif
+
+#include <io.h>
+
+typedef long int ssize_t;
+typedef struct regex regex_t;
+typedef int mode_t;
+typedef struct regmatch regmatch_t;
+
+#define REG_EXTENDED 1
+#define REG_NOSUB 2
+#define REG_NEWLINE 4
+#define REG_ICASE 8
+
+#define REG_NOMATCH -1
+
+#define R_OK 0
+#define W_OK 0
+#define X_OK 0
+
+#define S_ISREG(x) 0
+#define S_ISDIR(x) 0
+#define S_ISFIFO(x) 0
+
+struct regex
+{
+	int a;
+};
+struct regmatch
+{
+	int a;
+	int rm_so;
+	int rm_eo;
+};
+
+#if defined(BUILD_MONOLITHIC)
+#include <mupdf/fitz/getopt.h>
+
+#define optarg fz_optarg
+#define optind fz_optind
+#define getopt fz_getopt
+
+#endif
+
+#elif defined(HAVE_CONFIG_H)
 #include <config.h>
 #endif
 
@@ -176,6 +225,10 @@
 #define FILE_CHECK	1
 #define FILE_COMPILE	2
 #define FILE_LIST	3
+
+#ifndef STDIN_FILENO
+#define STDIN_FILENO		0
+#endif
 
 typedef regex_t file_regex_t;
 

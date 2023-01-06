@@ -206,7 +206,7 @@ int main(int argc, const char** argv)
 	struct magic_set *magic = NULL;
 	int longindex;
 	const char *magicfile = NULL;		/* where the magic is	*/
-	char *progname;
+	const char *progname;
 
 	/* makes islower etc work for other langs */
 	(void)setlocale(LC_CTYPE, "");

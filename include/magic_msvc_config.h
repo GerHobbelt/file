@@ -62,3 +62,6 @@
 /* #undef HAVE_ZLIB_H */
 /* #undef XZLIBSUPPORT */
 /* #undef ZLIBSUPPORT */
+
+#define HAVE_SYS_STAT_H 1
+#undef HAVE_DLFCN_H

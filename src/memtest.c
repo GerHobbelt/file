@@ -32,20 +32,25 @@ FILE_RCSID("@(#)$File: memtest.c,v 1.6 2022/09/24 20:30:13 christos Exp $")
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/mman.h>
 #endif
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_ERR_H
 #include <err.h>
+#endif
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
-#include <magic.h>
+#endif
+
+#include "magic.h"
 
 void *
 malloc(size_t len)

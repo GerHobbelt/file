@@ -384,7 +384,7 @@ close_and_restore(const struct magic_set *ms, const char *name, int fd,
 		utsbuf[1].tv_sec = sb->st_mtime;
 
 		(void) utimes(name, utsbuf); /* don't care if loses */
-#elif defined(HAVE_UTIME_H) || defined(HAVE_SYS_UTIME_H)
+#elif (defined(HAVE_UTIME_H) || defined(HAVE_SYS_UTIME_H)) && !defined(_WIN32)
 		struct utimbuf  utbuf;
 
 		(void)memset(&utbuf, 0, sizeof(utbuf));
