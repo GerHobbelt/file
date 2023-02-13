@@ -102,8 +102,14 @@ usage(void)
 	exit(EXIT_FAILURE);
 }
 
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main      file_memtest_main
+#endif
+
 int
-main(int argc, char *argv[])
+main(int argc, const char **argv)
 {
 	bool buf = false;
 	int c;
