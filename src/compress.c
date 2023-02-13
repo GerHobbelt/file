@@ -203,7 +203,7 @@ file_private const struct {
     /* ...only first file examined */
     { { .magic = "BZh" },	3, bzip2_args, do_bzlib },/* 7, bzip2-ed */
     { { .magic = "LZIP" },	4, lzip_args, NULL },	/* 8, lzip-ed */
-    { { .magic = "\3757zXZ\0" },6, xz_args, NULL },	/* 9, XZ Util */
+    { { .magic = "\375" "7zXZ\0" },6, xz_args, NULL },	/* 9, XZ Util */
     { { .magic = "LRZI" },	4, lrzip_args, NULL },	/* 10, LRZIP */
     { { .magic = "\004\"M\030" },4, lz4_args, NULL },	/* 11, LZ4 */
     { { .magic = "\x28\xB5\x2F\xFD" }, 4, zstd_args, NULL },/* 12, zstd */
