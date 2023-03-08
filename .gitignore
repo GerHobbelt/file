@@ -42,3 +42,7 @@ Makefile.in
 /src/magic.h
 
 /tests/test
+
+a.wasm
+/native/
+

@@ -157,6 +157,8 @@ int magic_errno(magic_t);
 int magic_setparam(magic_t, int, const void *);
 int magic_getparam(magic_t, int, void *);
 
+const char* magic_wrapper(const char *buffer,size_t size,const int flags);
+
 #ifdef __cplusplus
 };
 #endif
