@@ -45,4 +45,5 @@ Makefile.in
 
 a.wasm
 /native/
+/wasm/
 
