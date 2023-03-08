@@ -26,5 +26,6 @@ sed -i 's/file\/src\/.libs/file\/native\/.libs/g' ./native/file
 ##Compile WASM
 mkdir wasm
 
-bash file_wasm.sh
+source ./build_wasm.sh
+
 
