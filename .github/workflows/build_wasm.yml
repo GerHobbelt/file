@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: make
       
-    - name: Copy native binaries to native
+    - name: Copy native binaries to native dir
       run: |
         mkdir native
         cp ./src/file ./native/file
