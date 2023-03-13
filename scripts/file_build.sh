@@ -7,7 +7,7 @@ autoreconf -i
 ./configure
 make
 
-##Copy native binaries to native
+##Copy native binaries to native dir
 mkdir native
 cp ./src/file ./native/file
 cd native
