@@ -47,4 +47,3 @@ a.wasm
 /native/
 /wasm/
 
-src/magic_mgc.h
