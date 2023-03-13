@@ -22,8 +22,33 @@ jobs:
 
     - name: Install dependencies
       run: make
+      
+    - name: Copy native binaries to native
+      run: |
+        mkdir native
+        cp ./src/file ./native/file
+        cd native
+        mkdir .libs
+        cd ..
+        cp -Lr ./src/.libs/file ./native/.libs/file
+        cp -Lr ./src/.libs/libmagic.so.* ./native/.libs/
 
     - uses: mymindstorm/setup-emsdk@v11
 
-    - name: Verify
+    - name: Verify Emscripten
       run: emcc -v
+      
+    - name: Build WASM configure
+      run: emconfigure ./configure
+
+    - name: patch script to use native file to compile magic.mgc
+      run: sed -i 's/file\/src\/.libs/file\/native\/.libs/g' ./native/file
+
+    - name: Make WASM dir
+      run: mkdir wasm
+
+    - name: Run build script file
+      run: |
+         chmod +x ./build_wasm.sh
+         ./build_wasm.sh
+      shell: bash
