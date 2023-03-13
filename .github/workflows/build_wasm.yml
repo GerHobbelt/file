@@ -19,7 +19,7 @@ jobs:
     - name: configure
       run: ./configure
 
-    - name: Install dependencies
+    - name: Building native
       run: make
       
     - name: Copy native binaries to native dir
