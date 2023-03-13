@@ -690,9 +690,6 @@ magic_wrapper(const char *buffer,size_t size,const int flags)
 {
 	static char result[256];
 
-	sprintf(result,"[%02X%02X%02X%02X-%02X%02X%02X%02X] %d bytes:",(int)buffer[0],(int)buffer[1],(int)buffer[2],(int)buffer[3]
-		,(int)buffer[size-4],(int)buffer[size-3],(int)buffer[size-2],(int)buffer[size-1],(int)size);
-
 	magic_t magic = magic_open(flags);
 	if (!magic)
 	{
@@ -700,7 +697,7 @@ magic_wrapper(const char *buffer,size_t size,const int flags)
 		return result;
 	}
 
-	const char *magicfile="magic.mgc";
+	const char *magicfile="magic/magic.mgc";
 	if (magic_load(magic, magicfile) == -1)
 	{
 		sprintf(result,"Error: magic_load('%s') failed (%s, %s)",magicfile,magic_error(magic),strerror(errno));
@@ -716,7 +713,7 @@ magic_wrapper(const char *buffer,size_t size,const int flags)
 		return result;
 	}
 
-	strcat(result,info);
+	strcpy(result,info);
 	magic_close(magic);
 	return result;
 }
