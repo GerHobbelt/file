@@ -27,6 +27,7 @@
 
 #include "file.h"
 
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
