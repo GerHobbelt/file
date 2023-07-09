@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# $File: archive,v 1.187 2023/02/20 16:15:18 christos Exp $
+# $File: archive,v 1.191 2023/05/08 01:31:46 christos Exp $
 # archive:  file(1) magic for archive formats (see also "msdos" for self-
 #           extracting compressed archives)
 #
@@ -30,9 +30,11 @@
 # check for 1st image main name with digits used for sorting
 # and for name extension case insensitive like: PNG JPG JPEG TIF TIFF GIF BMP
 >>>>>>>>0	regex		\^[0-9]{2,4}[.](png|jpg|jpeg|tif|tiff|gif|bmp)
-#foo
 >>>>>>>>>0	use	tar-cbt
-# if 1st member name without digits and without used image suffix then it is a TAR archive
+# check for 1st member name with ovf suffix
+>>>>>>>>0	regex		\^.{1,96}[.](ovf)
+>>>>>>>>>0	use	tar-ova
+# if 1st member name without digits and without used image suffix and without *.ovf then it is a TAR archive
 >>>>>>>>0	default		x
 >>>>>>>>>0	use	tar-file
 #	minimal check and then display tar archive information which can also be
@@ -168,6 +170,21 @@
 # name[100] probably like: 19.jpg 0001.png 0002.png
 # or maybe like ComicInfo.xml
 >0	string		>\0		\b, 1st image %-.60s
+# Summary:	Open Virtualization Format *.OVF with disk images and more packed as TAR archive *.OVA
+# From:		Joerg Jenderek
+# URL:		https://en.wikipedia.org/wiki/Open_Virtualization_Format
+#		http://fileformats.archiveteam.org/wiki/OVF_(Open_Virtualization_Format)
+# Reference:	http://mark0.net/download/triddefs_xml.7z/defs/o/ova.trid.xml
+# Note:		called "Open Virtualization Format package" by TrID
+#		assuming *.ovf comes first
+0	name		tar-ova
+>0	string		x		Open Virtualization Format Archive
+#!:mime	application/x-ustar
+# http://extension.nirsoft.net/ova
+!:mime	application/x-virtualbox-ova
+!:ext	ova
+# assuming name[100] like: DOS-0.9.ovf FreeDOS_1.ovf Win98SE_DE.ovf
+>0	string		>\0		\b, with %-.60s
 
 # Incremental snapshot gnu-tar format from:
 # https://www.gnu.org/software/tar/manual/html_node/Snapshot-Files.html
@@ -185,16 +202,88 @@
 # The SVR4 "cpio(4)" hints that there are additional formats, but they
 # are defined as "short"s; I think all the new formats are
 # character-header formats and thus are strings, not numbers.
-0	short		070707		cpio archive
+# URL:		http://fileformats.archiveteam.org/wiki/Cpio
+#		https://en.wikipedia.org/wiki/Cpio
+# Reference:	https://people.freebsd.org/~kientzle/libarchive/man/cpio.5.txt
+# Update:	Joerg Jenderek
+#
+# Reference:    http://mark0.net/download/triddefs_xml.7z/defs/a/ark-cpio-bin.trid.xml
+# Note:		called "CPIO archive (binary)" by TrID, "cpio/Binary LE" by 7-Zip and "CPIO" by DROID via PUID fmt/635
+0	short		070707
+# skip DROID fmt-635-signature-id-960.cpio by looking for pathname of 1st entry
+>26	string		>\0		cpio archive
 !:mime	application/x-cpio
+# https://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Media.iso
+# boot/x86_64/loader/bootlogo
+# message.cpi
+!:ext	/cpio/cpi
+>>0	use	cpio-bin
+# Reference:    http://mark0.net/download/triddefs_xml.7z/defs/a/ark-cpio-bin-sw.trid.xml
+# Note:		called "CPIO archive (byte swapped binary)" by TrID and "Cpio/Binary BE" by 7-Zip
 0	short		0143561		byte-swapped cpio archive
 !:mime	application/x-cpio # encoding: swapped
+# https://telparia.com/fileFormatSamples/archive/cpio/skeleton2.cpio
+!:ext	cpio
+>0	use	cpio-bin-be
+# Reference:    http://mark0.net/download/triddefs_xml.7z/defs/a/ark-cpio.trid.xml
+# Note:		called "CPIO archive (portable)" by TrID, "cpio/Portable ASCII" by 7-Zip and "cpio/odc" by GNU cpio
 0	string		070707		ASCII cpio archive (pre-SVR4 or odc)
 !:mime	application/x-cpio
+# https://telparia.com/fileFormatSamples/archive/cpio/ pthreads-1.60B5.osr5src.cpio cinema.cpi VOL.000.008 VOL.000.012
+!:ext	cpio/cpi/008/012
+# Note:		called "CPIO archive (portable)" by TrID, "cpio/New ASCII" by 7-Zip and "cpio/newc" by GNU cpio
 0	string		070701		ASCII cpio archive (SVR4 with no CRC)
 !:mime	application/x-cpio
+# https://telparia.com/fileFormatSamples/archive/cpio/MainActor-2.06.3.cpio
+!:ext	cpio
+# Note:		called "CPIO archive (portable)" by TrID, "cpio/New CRC" by 7-Zip and "cpio/crc" by GNU cpio
 0	string		070702		ASCII cpio archive (SVR4 with CRC)
 !:mime	application/x-cpio
+# http://ftp.gnu.org/gnu/tar/tar-1.27.cpio.gz
+# https://telparia.com/fileFormatSamples/archive/cpio/pcmcia
+!:ext	/cpio
+#	display information of old binary cpio archive
+# Note:	verfied by 7-Zip `7z l -tcpio -slt *.cpio` and
+#	`cpio -ivt --numeric-uid-gid --file=clam.bin-le.cpio`
+0	name	cpio-bin
+# c_dev; device number; WHAT IS THAT?
+>2	uleshort	x		\b; device %u
+# c_ino; truncated inode number; use `ls --inode`
+>4	uleshort	x		\b, inode %u
+# c_mode; mode specifies permissions and file type like: ?622~?rw-r--r-- by `ls -l`
+>6	uleshort	x		\b, mode %o
+# c_uid; numeric user id; use `ls --numeric-uid-gid`
+>8	uleshort	x		\b, uid %u
+# c_gid; numeric group id
+>10	uleshort	x		\b, gid %u
+# c_nlink; links to this file; directories at least 2
+>12	uleshort	>1		\b, %u links
+# c_rdev; device number for block and character entries; zero for all other entries by writers
+# like 0x0440 for /dev/ttyS0
+>14	uleshort	>0		\b, device %#4.4x
+# c_mtime[2]; modification time in seconds since 1 January 1970; most-significant 16 bits first 
+>16	medate		x		\b, modified %s
+# c_filesize[2]; size of pathname; most-significant 16 bits first like: 544
+>22	melong		x		\b, %u bytes
+# c_namesize; bytes in the pathname that follows the header like: 9
+#>20	uleshort	x		\b, namesize %u
+# pathname of entry like: "clam.exe"
+>26	string		x		"%s"
+#	display information of old binary byte swapped cpio archive
+# Note:	verfied by 7-Zip `7z l -tcpio -slt *.cpio` and
+#	`LANGUAGE=C cpio -ivt --numeric-uid-gid --file=clam.bin-be.cpio`
+0	name	cpio-bin-be
+>2	ubeshort	x		\b; device %u
+>4	ubeshort	x		\b, inode %u
+>6	ubeshort	x		\b, mode %o
+>8	ubeshort	x		\b, uid %u
+>10	ubeshort	x		\b, gid %u
+>12	ubeshort	>1		\b, %u links
+>14	ubeshort	>0		\b, device %#4.4x
+>16	bedate		x		\b, modified %s
+>22	ubelong	 	x		\b, %u bytes
+#>20	ubeshort	x		\b, namesize %u
+>26	string		x		"%s"
 
 #
 # Various archive formats used by various versions of the "ar"
@@ -271,7 +360,8 @@
 #>>68	string		x		(format %.3s)
 >68	string		=2.0\n
 # 2nd archive name=control archive name like control.tar.gz or control.tar.xz
->>72	string		>\0		\b, with %.14s
+# or control.tar.zst
+>>72	string		>\0		\b, with %.15s
 # look for 3rd archive name=data archive name like data.tar.{gz,xz,bz2,lzma}
 >>0	search/0x93e4f	data.tar.	\b, data compression
 # the above line only works if FILE_BYTES_MAX in ../../src/file.h is raised
@@ -1876,16 +1966,116 @@
 >8	belong	x	\b, size %d
 
 # Zoo archiver
-20	lelong		0xfdc4a7dc	Zoo archive data
+# Update: Joerg Jenderek
+# URL:		https://en.wikipedia.org/wiki/Zoo_(file_format)
+#		http://fileformats.archiveteam.org/wiki/Zoo
+# Reference:	http://mark0.net/download/triddefs_xml.7z/defs/a/ark-zoo-strict.trid.xml
+#		http://distcache.freebsd.org/ports-distfiles/zoo-2.10pl1.tar.gz/zoo.h 
+# Note:		called "ZOO compressed archive (strict)" by TrID and "ZOO Compressed Archive" by DROID via PUID x-fmt/269 
+#		verified by command like `deark -m zoo -l -d2 WHRCGA.ZOO`
+20	lelong		0xfdc4a7dc
+# skip DROID x-fmt-269-signature-id-621.zoo by looking for valid major version to manipulate archive
+>32	byte		>0		Zoo archive data
 !:mime	application/x-zoo
->4	byte		>48		\b, v%c.
->>6	byte		>47		\b%c
->>>7	byte		>47		\b%c
->32	byte		>0		\b, modify: v%d
->>33	byte		x		\b.%d+
->42	lelong		0xfdc4a7dc	\b,
->>70	byte		>0		extract: v%d
->>>71	byte		x		\b.%d+
+# bak is extension of backup-ed zoo
+!:ext	zoo/bak
+# version in text form like: 1.50 2.00 2.10
+>>4	byte		>48		\b, v%c.
+>>>6	byte		>47		\b%c
+>>>>7	byte		>47		\b%c
+# ZOO files typically start with "ZOO ?.?? Archive.", followed by the bytes 0x1a 0x0 0x0; not used by Zoo and they may be anything
+>>8	string		!\040Archive.\032 \b, at 8
+>>>8	string		x		text "%0.10s"
+# major_ver.minor_ver; minimum version needed to manipulate archive like: 1.0 2.0
+>>32	byte		>0		\b, modify: v%d
+>>>33	byte		x		\b.%d+
+# major_ver.minor_ver; minimum version needed to extract after modify like in old versions
+>>(24.l+28)	ubyte	x		\b, extract: v%u
+>>(24.l+29)	ubyte	x		\b.%u+
+# with zoo 2.00 additional fields have been added in the archive header
+>>32	byte		>1
+# type; type of archive header like: 1 2
+>>>34		ubyte	!1		\b, header type %u
+# acmt_pos; position of archive comment like: 6258 30599 61369 149501
+>>>35		lelong	>0		\b, at %d
+# acmt_len; length of archive comment like: 258
+>>>>39			uleshort x	%u bytes comment
+#>>>>(35.l)		ubequad	x	COMMENT=%16.16llx
+# 1st character of comment maybe is CarriageReturn (0x0d)
+>>>>(35.l) 		ubyte	<040
+# 2nd character of comment maybe is LineFeed (0x0a)
+>>>>>(35.l+1) 		ubyte	<040
+# comment string after CRLF like "Anonymous ftp site garbo.uwasa.fi 128.214.87.1 moderated by"
+>>>>>>(35.l+2)		string	x	%s
+# next character of remaining comment maybe is CarriageReturn (0x0d)
+>>>>>>>&0		ubyte	<040
+>>>>>>>>&0		ubyte	<040
+# 2nd comment part like: Timo Salmi ts@chyde.uwasa.fi      PC directories and uploads\015\012Harri Valkama hv@chyde.uwasa.fi   PC, Mac, Unix files, and upload
+>>>>>>>>>&0		string	>037	%s
+# vdata; archive-level versioning byte like: 1 3
+>>>41		ubyte	!1		\b, vdata %#x
+# zoo_start; pointer to 1st entry header 
+>>24	lelong		x		\b; at %u
+# zoo_minus; zoo_start -1 for consistency checking
+#>>28	lelong		x		\b, zoo_minus %#x
+# zoo_tag; tag for check
+#>>(24.l+0) ulelong	!0xfdc4a7dc	\b, zoo_tag=%8.8x
+# type; type of directory entry like: 1 2
+>>(24.l+4)	ubyte	!2		type=%u
+# packing_method; 0~no packing 1~normal LZW 2~lzh
+>>(24.l+5)	ubyte		x	method=
+>>>(24.l+5)	ubyte		0	\bnot-compressed
+>>>(24.l+5)	ubyte		1	\blzd
+>>>(24.l+5)	ubyte		2	\blzh
+# next; position of next directory entry
+>>(24.l+6)	ulelong		x	\b, next entry at %u
+# offset; position of file data for this entry
+#>>(24.l+10) ulelong		x	\b, data at %u
+# file_crc; CRC-16 of file data
+>>(24.l+18)	uleshort	x	\b, CRC %#4.4x
+# comment; zero if none or points to entry comment like ADD9h (WHRCGA.ZOO)
+>>(24.l+32)	lelong		>0	\b, at %#x
+# cmt_size; if not 0 for none then length of entry comment like: 46
+>>>(24.l+36)	uleshort	>0	%u bytes comment
+# entry comment itself like: "CGA .GL file showing menu input from keyboard"
+>>>>(&-6.l)	string		x	"%s"
+# org_size; original size of file
+>>(24.l+20)	ulelong		x	\b, size %u
+# size_now; compressed size of file
+>>(24.l+24)	ulelong		x	(%u compressed)
+# major_ver.minor_ver; minimum version needed to extract already done
+# deleted; will be 1 if deleted, 0 if not
+>>(24.l+30)	ubyte		=1	\b, deleted
+# struc; file structure if any; WHAT IS THAT?
+>>(24.l+31)	ubyte		!0	\b, structured
+# fname[13]; short/DOS file name like 12345678.012
+>>(24.l+38)	string	x		\b, %0.13s
+# for directory entry type 2 with variable part
+>>(24.l+4)	ubyte	=2
+# var_dir_len; length of variable part of dir entry
+>>>(24.l+51)		uleshort >0
+#>>>(24.l+51)		uleshort >0	\b, variable part length %u
+# namlen; length of long filename
+#>>>>(24.l+56)		ubyte	x	\b, namlen %u
+# dirlen; length of directory name
+#>>>>(24.l+57)		ubyte	x	\b, dirlen %u
+# if file length positive then show long file name
+>>>>(24.l+56)		ubyte	>0
+# lfname[256]; long file name \0-terminated
+>>>>>(24.l+58)		string	x	"%s"
+# if directory length positive then jump before file name field and then jump this addtional length plus 2 (\0-terminator + dirlen field) to following directory name
+>>>>(24.l+57)		ubyte	>0
+>>>>>(24.l+55)		ubyte	x
+# dirname[256]; directory name \0-terminated
+>>>>>>&(&0.b+2)		string	x	in "%s"
+# dir_crc; CRC of directory entry
+#>>>(24.l+54)		uleshort x	\b, entry CRC %#4.4x
+# tz; timezone where file was archived; 7Fh~unknown 4~1.00hoursWestOfUTC 12 16 20~5.00hoursWestOfUTC -107~26.75hoursEastOfUTC -4~1.00hoursEastOfUTC
+>>>(24.l+53)		byte	!0x7f	\b, time zone %d/4
+# date; last mod file date in DOS format
+>>>(24.l+14)		lemsdosdate x	\b, modified %s
+# time; last mod file time in DOS format
+>>>(24.l+16)		lemsdostime x	%s
 
 # Shell archives
 10	string		#\ This\ is\ a\ shell\ archive	shell archive text
