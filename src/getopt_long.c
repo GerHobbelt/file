@@ -64,13 +64,13 @@ int	opterr = 1;		/* if error message should be printed */
 int	optind = 1;		/* index into parent argv vector */
 int	optopt = '?';		/* character checked for validity */
 int	optreset;		/* reset getopt */
-const char    *optarg;		/* argument associated with option */
+const char *optarg;		/* argument associated with option */
 #elif HAVE_NBTOOL_CONFIG_H && !HAVE_DECL_OPTRESET
 static int optreset;
 #endif
 
 #ifdef __weak_alias
-__weak_alias(getopt_long,_getopt_long)
+__weak_alias(getopt_long, _getopt_long)
 #endif
 
 #define IGNORE_FIRST	(*options == '-' || *options == '+')
@@ -89,9 +89,9 @@ __weak_alias(getopt_long,_getopt_long)
 
 #define	EMSG	""
 
-static int getopt_internal(int, char **, const char *);
-static int gcd(int, int);
-static void permute_args(int, int, int, char **);
+static int getopt_internal(int nargc, const char** nargv, const char* options);
+static int gcd(int a, int b);
+static void permute_args(int panonopt_start, int panonopt_end, int opt_end, const char** nargv);
 
 static const char *place = EMSG; /* option letter processing */
 
@@ -132,7 +132,7 @@ gcd(int a, int b)
  * in each block).
  */
 static void
-permute_args(int panonopt_start, int panonopt_end, int opt_end, char **nargv)
+permute_args(int panonopt_start, int panonopt_end, int opt_end, const char **nargv)
 {
 	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
 	char *swap;
@@ -168,9 +168,9 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end, char **nargv)
  *  Returns -2 if -- is found (can be long option or end of options marker).
  */
 static int
-getopt_internal(int nargc, char **nargv, const char *options)
+getopt_internal(int nargc, const char **nargv, const char *options)
 {
-	char *oli;				/* option letter list index */
+	const char *oli;				/* option letter list index */
 	int optchar;
 
 	_DIAGASSERT(nargv != NULL);
@@ -283,7 +283,7 @@ start:
 	} else {				/* takes (optional) argument */
 		optarg = NULL;
 		if (*place)			/* no white space */
-			optarg = (char *)place;
+			optarg = place;
 		/* XXX: disable test for :: if PC? (GNU doesn't) */
 		else if (oli[1] != ':') {	/* arg not optional */
 			if (++optind >= nargc) {	/* no arg */
@@ -310,14 +310,14 @@ start:
  * [eventually this will replace the real getopt]
  */
 int
-getopt(int nargc, char * const *nargv, const char *options)
+getopt(int nargc, const char * const *nargv, const char *options)
 {
 	int retval;
 
 	_DIAGASSERT(nargv != NULL);
 	_DIAGASSERT(options != NULL);
 
-	retval = getopt_internal(nargc, (char **)nargv, options);
+	retval = getopt_internal(nargc, nargv, options);
 	if (retval == -2) {
 		++optind;
 		/*
@@ -326,7 +326,7 @@ getopt(int nargc, char * const *nargv, const char *options)
 		 */
 		if (nonopt_end != -1) {
 			permute_args(nonopt_start, nonopt_end, optind,
-				     (char **)nargv);
+				     nargv);
 			optind -= nonopt_end - nonopt_start;
 		}
 		nonopt_start = nonopt_end = -1;

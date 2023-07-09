@@ -225,7 +225,6 @@ int main(int argc, const char** argv)
 
 	file_setprogname(progname);
 
-
 #ifdef S_IFLNK
 	posixly = getenv("POSIXLY_CORRECT") != NULL;
 	flags |=  posixly ? MAGIC_SYMLINK : 0;
