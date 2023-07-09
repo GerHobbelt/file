@@ -52,6 +52,8 @@ FILE_RCSID("@(#)$File: memtest.c,v 1.6 2022/09/24 20:30:13 christos Exp $")
 
 #include "magic.h"
 
+#if defined(MAP_FAILED) && defined(RTLD_NEXT)
+
 void *
 malloc(size_t len)
 {
@@ -161,3 +163,5 @@ main(int argc, const char **argv)
 
 	return 0;
 }
+
+#endif
