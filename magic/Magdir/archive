@@ -1623,6 +1623,11 @@
 !:mime	application/zip
 !:ext zip/cbz
 
+# ZIP File
+0	string		PK\x03\x03PK\x03\x04  	Unknown Zip file, may be like PKZIP v2.50
+!:mime	application/zip
+!:ext zip/cbz
+
 # Android APK file (Zip archive)
 0	string		PK\003\004
 !:strength +1
@@ -2147,6 +2152,9 @@
 !:mime	application/x-bittorrent
 !:ext	torrent
 0	string	d4:info		BitTorrent file
+!:mime	application/x-bittorrent
+!:ext	torrent
+0	string	d13:creation\ date		BitTorrent file
 !:mime	application/x-bittorrent
 !:ext	torrent
 
