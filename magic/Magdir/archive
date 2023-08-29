@@ -1957,6 +1957,7 @@
 >>30	search/100/b !application/epub+zip
 >>>26    string          !\x8\0\0\0mimetype	Zip archive data
 !:mime	application/zip
+!:ext zip/cbz
 >>>>4	beshort		x			\b, at least
 >>>>4	use		zipversion
 >>>>4	beshort		x			to extract
