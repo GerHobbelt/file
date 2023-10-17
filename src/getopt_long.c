@@ -135,7 +135,7 @@ static void
 permute_args(int panonopt_start, int panonopt_end, int opt_end, const char **nargv)
 {
 	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
-	char *swap;
+	const char *swap;
 
 	_DIAGASSERT(nargv != NULL);
 
@@ -310,7 +310,7 @@ start:
  * [eventually this will replace the real getopt]
  */
 int
-getopt(int nargc, const char * const *nargv, const char *options)
+getopt(int nargc, const char **nargv, const char *options)
 {
 	int retval;
 
