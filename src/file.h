@@ -27,7 +27,7 @@
  */
 /*
  * file.h - definitions for file(1) program
- * @(#)$File: file.h,v 1.246 2023/07/17 15:54:44 christos Exp $
+ * @(#)$File: file.h,v 1.248 2023/07/28 14:38:25 christos Exp $
  */
 
 #ifndef __file_h__
@@ -214,9 +214,11 @@ struct regmatch
 /*
  * Dec 31, 23:59:59 9999
  * we need to make sure that we don't exceed 9999 because some libc
- * implementations like muslc crash otherwise
+ * implementations like muslc crash otherwise. If you are unlucky
+ * to be running on a system with a 32 bit time_t, then it is even less.
  */
-#define	MAX_CTIME	CAST(time_t, 0x3afff487cfULL)
+#define	MAX_CTIME \
+    CAST(time_t, sizeof(time_t) > 4 ? 0x3afff487cfULL : 0x7fffffffULL)
 
 #define FILE_BADSIZE CAST(size_t, ~0ul)
 #define MAXDESC	64		/* max len of text description/MIME type */
@@ -585,10 +587,12 @@ file_protected const char *file_fmtnum(char *, size_t, const char *, int);
 file_protected struct magic_set *file_ms_alloc(int);
 file_protected void file_ms_free(struct magic_set *);
 file_protected int file_default(struct magic_set *, size_t);
-file_protected int file_buffer(struct magic_set *, int, struct stat *, const char *,
-    const void *, size_t);
-file_protected int file_fsmagic(struct magic_set *, const char *, struct stat *);
-file_protected int file_pipe2file(struct magic_set *, int, const void *, size_t);
+file_protected int file_buffer(struct magic_set *, int, struct stat *,
+    const char *, const void *, size_t);
+file_protected int file_fsmagic(struct magic_set *, const char *, 
+    struct stat *);
+file_protected int file_pipe2file(struct magic_set *, int, const void *,
+    size_t);
 file_protected int file_vprintf(struct magic_set *, const char *, va_list)
     __attribute__((__format__(__printf__, 2, 0)));
 file_protected int file_separator(struct magic_set *);
@@ -624,10 +628,12 @@ file_protected int file_apprentice(struct magic_set *, const char *, int);
 file_protected size_t file_magic_strength(const struct magic *, size_t);
 file_protected int buffer_apprentice(struct magic_set *, struct magic **,
     size_t *, size_t);
-file_protected int file_magicfind(struct magic_set *, const char *, struct mlist *);
+file_protected int file_magicfind(struct magic_set *, const char *,
+    struct mlist *);
 file_protected uint64_t file_signextend(struct magic_set *, struct magic *,
     uint64_t);
-file_protected uintmax_t file_varint2uintmax_t(const unsigned char *, int, size_t *);
+file_protected uintmax_t file_varint2uintmax_t(const unsigned char *, int,
+    size_t *);
 
 file_protected void file_badread(struct magic_set *);
 file_protected void file_badseek(struct magic_set *);
@@ -644,8 +650,8 @@ file_protected size_t file_mbswidth(struct magic_set *, const char *);
 file_protected const char *file_getbuffer(struct magic_set *);
 file_protected ssize_t sread(int, void *, size_t, int);
 file_protected int file_check_mem(struct magic_set *, unsigned int);
-file_protected int file_looks_utf8(const unsigned char *, size_t, file_unichar_t *,
-    size_t *);
+file_protected int file_looks_utf8(const unsigned char *, size_t,
+    file_unichar_t *, size_t *);
 file_protected size_t file_pstring_length_size(struct magic_set *,
     const struct magic *);
 file_protected size_t file_pstring_get_length(struct magic_set *,
@@ -653,8 +659,8 @@ file_protected size_t file_pstring_get_length(struct magic_set *,
 file_protected char * file_printable(struct magic_set *, char *, size_t,
     const char *, size_t);
 #ifdef __EMX__
-file_protected int file_os2_apptype(struct magic_set *, const char *, const void *,
-    size_t);
+file_protected int file_os2_apptype(struct magic_set *, const char *,
+    const void *, size_t);
 #endif /* __EMX__ */
 file_protected int file_pipe_closexec(int *);
 file_protected int file_clear_closexec(int);
@@ -667,10 +673,10 @@ file_protected int buffer_fill(const struct buffer *);
 
 
 
-file_protected int file_regcomp(struct magic_set *, file_regex_t *, const char *,
-    int);
-file_protected int file_regexec(struct magic_set *, file_regex_t *, const char *,
-    size_t, regmatch_t *, int);
+file_protected int file_regcomp(struct magic_set *, file_regex_t *,
+    const char *, int);
+file_protected int file_regexec(struct magic_set *, file_regex_t *,
+    const char *, size_t, regmatch_t *, int);
 file_protected void file_regfree(file_regex_t *);
 
 typedef struct {
