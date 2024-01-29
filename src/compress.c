@@ -411,7 +411,7 @@ file_protected ssize_t
 sread(int fd, void *buf, size_t n, int canbepipe __attribute__((__unused__)))
 {
 	ssize_t rv;
-#if defined(FIONREAD) && !defined(__MINGW32__)
+#if defined(FIONREAD) && !defined(__MINGW32__) && !defined(WIN32)
 	int t = 0;
 #endif
 	size_t rn = n;
@@ -419,7 +419,7 @@ sread(int fd, void *buf, size_t n, int canbepipe __attribute__((__unused__)))
 	if (fd == STDIN_FILENO)
 		goto nocheck;
 
-#if defined(FIONREAD) && !defined(__MINGW32__)
+#if defined(FIONREAD) && !defined(__MINGW32__) && !defined(WIN32)
 	if (canbepipe && (ioctl(fd, FIONREAD, &t) == -1 || t == 0)) {
 #ifdef FD_ZERO
 		ssize_t cnt;
