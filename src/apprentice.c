@@ -32,7 +32,7 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: apprentice.c,v 1.342 2023/07/17 14:38:35 christos Exp $")
+FILE_RCSID("@(#)$File: apprentice.c,v 1.344 2023/12/29 18:04:47 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
@@ -574,6 +574,7 @@ file_ms_alloc(int flags)
 		ms->mlist[i] = NULL;
 	ms->file = "unknown";
 	ms->line = 0;
+	ms->magwarn = 0;
 	ms->indir_max = FILE_INDIR_MAX;
 	ms->name_max = FILE_NAME_MAX;
 	ms->elf_shnum_max = FILE_ELF_SHNUM_MAX;
@@ -583,6 +584,7 @@ file_ms_alloc(int flags)
 	ms->regex_max = FILE_REGEX_MAX;
 	ms->bytes_max = FILE_BYTES_MAX;
 	ms->encoding_max = FILE_ENCODING_MAX;
+	ms->magwarn_max = FILE_MAGWARN_MAX;
 #ifdef USE_C_LOCALE
 	ms->c_lc_ctype = newlocale(LC_CTYPE_MASK, "C", 0);
 	assert(ms->c_lc_ctype != NULL);
@@ -3354,6 +3356,19 @@ check_buffer(struct magic_set *ms, struct magic_map *map, const char *dbname)
 	uint32_t version;
 	int i, needsbyteswap;
 
+	entries = CAST(uint32_t, map->len / sizeof(struct magic));
+	if (entries < MAGIC_SETS + 1) {
+		file_error(ms, 0, "Too few magic entries %u in `%s'",
+		    entries, dbname);
+		return -1;
+	}
+	if ((entries * sizeof(struct magic)) != map->len) {
+		file_error(ms, 0, "Size of `%s' %" SIZE_T_FORMAT "u is not "
+		    "a multiple of %" SIZE_T_FORMAT "u",
+		    dbname, map->len, sizeof(struct magic));
+		return -1;
+	}
+
 	ptr = CAST(uint32_t *, map->p);
 	if (*ptr != MAGICNO) {
 		if (swap4(*ptr) != MAGICNO) {
@@ -3371,13 +3386,6 @@ check_buffer(struct magic_set *ms, struct magic_map *map, const char *dbname)
 		file_error(ms, 0, "File %s supports only version %d magic "
 		    "files. `%s' is version %d", VERSION,
 		    VERSIONNO, dbname, version);
-		return -1;
-	}
-	entries = CAST(uint32_t, map->len / sizeof(struct magic));
-	if ((entries * sizeof(struct magic)) != map->len) {
-		file_error(ms, 0, "Size of `%s' %" SIZE_T_FORMAT "u is not "
-		    "a multiple of %" SIZE_T_FORMAT "u",
-		    dbname, map->len, sizeof(struct magic));
 		return -1;
 	}
 	map->magic[0] = CAST(struct magic *, map->p) + 1;

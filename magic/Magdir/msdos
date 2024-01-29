@@ -1,6 +1,6 @@
 
 #------------------------------------------------------------------------------
-# $File: msdos,v 1.179 2023/12/10 16:11:04 christos Exp $
+# $File: msdos,v 1.181 2023/12/21 19:07:52 christos Exp $
 # msdos:  file(1) magic for MS-DOS files
 #
 
@@ -168,12 +168,21 @@
 #>>>(0x3c.l+92)	leshort		x	\b, SUBSYSTEM %u
 >>(0x3c.l+24)	leshort		0x020b	\b32+ executable
 #>>>(0x3c.l+92)	leshort		x	\b, SUBSYSTEM %u
->>(0x3c.l+24)	leshort		0x0107	ROM image
->>(0x3c.l+24)	default		x	Unknown PE signature
+# ROM image is without DOS MZ header and without PE\0\0 signature
+#>>(0x3c.l+24)	leshort		0x0107	ROM image
+>>(0x3c.l+24)	default		x	with unknown signature
 >>>&0 		leshort		x	%#x
 >>(0x3c.l+22)	leshort&0x2000	>0	(DLL)
 # 0~IMAGE_SUBSYSTEM_UNKNOWN An unknown subsystem
 >>(0x3c.l+92)	leshort		0	(
+# WINE https://www.winehq.org/ DLL libraries without subsystem, some examples:
+# fakedlls/l3codeca.acm fakedlls/msadp32.acm fakedlls/inetcpl.cpl fakedlls/inetcpl.cpl fakedlls/kernel32.dll fakedlls/user32.dll fakedlls/gdi32.dll
+# fakedlls/winex11.drv fakedlls/winspool.drv fakedlls/gphoto2.ds fakedlls/sane.ds fakedlls/ntoskrnl.exe fakedlls/dhtmled.ocx fakedlls/hhctrl.ocx
+# fakedlls/hidclass.sys fakedlls/mshtml.tlb fakedlls/stdole32.tlb fakedlls/vwin32.vxd fakedlls/vmm.vxd
+>>>0x40		string		Wine\ placeholder\ DLL	\bWINE stub)
+!:ext	acm/cpl/dll/drv/ds/exe/ocx/sys/tlb/vxd
+>>>0x40		string		Wine\ builtin\ DLL	\bWINE)
+!:ext	acm/cpl/dll/drv/ds/exe/ocx/sys/tlb/vxd
 # Summary:	Microsoft compiled help *.HXS format 2.0
 # URL:		https://en.wikipedia.org/wiki/Microsoft_Help_2
 # Reference:	http://www.russotto.net/chm/itolitlsformat.html
@@ -182,10 +191,6 @@
 #		verified by command like `pelook.exe -d WINWORD.HXS & pelook.exe -h WINWORD.HXS`
 >>>(0x3c.l+6)	uleshort	=2	\bMicrosoft compiled help format 2.0)
 !:ext	hxs
-# 3 PE sections (.text, .reloc, .rsrc) implies some Control Panel Item like: 
-# CPL:	Control Panel item for WINE 1.7.28	https://www.winehq.org/
->>>(0x3c.l+6)	uleshort	!2	\bControl Panel Item)
-!:ext	cpl
 # 1~IMAGE_SUBSYSTEM_NATIVE device drivers and native Windows processes 
 >>(0x3c.l+92)	leshort		1
 # Native PEs include ntoskrnl.exe, hal.dll, smss.exe, autochk.exe, and all the
@@ -314,10 +319,14 @@
 >>>&0		leshort		x	%#x
 >>(0x3c.l+22)	leshort&0x0200	>0	(stripped to external PDB)
 >>(0x3c.l+22)	leshort&0x1000	>0	system file
+
+# Check for presence of COM Runtime descriptor
 >>(0x3c.l+24)	leshort		0x010b
->>>(0x3c.l+232) lelong	>0	Mono/.Net assembly
+>>>(0x3c.l+116)	leshort	>14
+>>>>(0x3c.l+232) lelong	>0	Mono/.Net assembly
 >>(0x3c.l+24)	leshort		0x020b
->>>(0x3c.l+248) lelong	>0	Mono/.Net assembly
+>>>(0x3c.l+132)	leshort	>14
+>>>>(0x3c.l+248) lelong	>0	Mono/.Net assembly
 
 # hooray, there's a DOS extender using the PE format, with a valid PE
 # executable inside (which just prints a message and exits if run in win)
