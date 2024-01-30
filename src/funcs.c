@@ -905,6 +905,7 @@ file_print_guid(char *str, size_t len, const uint64_t *guid)
 }
 
 #ifdef HAVE_FORK
+
 file_protected int
 file_pipe_closexec(int *fds)
 {
