@@ -922,7 +922,6 @@ file_pipe_closexec(int *fds)
 	return 0;
 #endif
 }
-#endif
 
 file_protected int
 file_clear_closexec(int fd) {

@@ -29,9 +29,10 @@
 /* #undef HAVE_PIPE2 */
 /* #undef HAVE_POSIX_SPAWNP */
 /* #undef HAVE_PREAD */
+/* #undef HAVE_SYS_BSWAP_H */
 /* #undef HAVE_SIG_T */
 /* #undef HAVE_SPAWN_H */
-#define HAVE_STDINT_H 1
+/* #undef HAVE_REGEX_H */
 /* #undef HAVE_STRCASESTR */
 /* #undef HAVE_STRLCAT */
 /* #undef HAVE_STRLCPY */
