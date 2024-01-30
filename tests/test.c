@@ -41,6 +41,11 @@
 
 #include "magic.h"
 
+#if defined(_WIN32)
+/* MSVC does not have setenv */
+#define setenv(name, value, overwrite) do {_putenv_s(name, value);} while(0)
+#endif
+
 static const char *prog;
 
 static void *
@@ -99,7 +104,6 @@ int main(int argc, const char** argv)
 
 	setenv("TZ", "UTC", 1);
 	tzset();
-
 
 	prog = strrchr(argv[0], '/');
 	if (prog)
