@@ -363,6 +363,9 @@ int main(int argc, const char** argv)
 			break;
 		}
 
+// This is '-z', which is not default currently.
+	flags |= MAGIC_COMPRESS;
+
 	if (errflg) {
 		usage();
 	}

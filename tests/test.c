@@ -102,7 +102,11 @@ int main(int argc, const char** argv)
 	int e = EXIT_FAILURE, flags, c;
 	FILE *fp;
 
+#ifdef _WIN32
+	_putenv("TZ=UTC");
+#else
 	setenv("TZ", "UTC", 1);
+#endif
 	tzset();
 
 	prog = strrchr(argv[0], '/');

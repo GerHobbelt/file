@@ -57,6 +57,9 @@ FILE_RCSID("@(#)$File: apprentice.c,v 1.344 2023/12/29 18:04:47 christos Exp $")
 #include <sys/bswap.h>
 #endif
 
+#ifdef MAGIC_RESOURCE
+#include "magic-mgc-rc.h"
+#endif
 
 #define	EATAB {while (isascii(CAST(unsigned char, *l)) && \
 		      isspace(CAST(unsigned char, *l)))  ++l;}
@@ -3268,6 +3271,55 @@ apprentice_buf(struct magic_set *ms, struct magic *buf, size_t len)
 	return map;
 }
 
+#ifdef MAGIC_RESOURCE
+/*
+ * load compiled file from win32 resource
+ */
+#include <windows.h>
+
+file_private struct magic_map *
+apprentice_map_resource(struct magic_set *ms)
+{
+	char *dbname = NULL;
+	struct magic_map *map;
+	struct magic_map *rv = NULL;
+
+	if ((map = CAST(struct magic_map *, calloc(1, sizeof(*map)))) == NULL) {
+		file_oomem(ms, sizeof(*map));
+		goto error;
+	}
+	map->type = MAP_TYPE_USER;	/* unspecified */
+
+	dbname = mkdbname(ms, "%%WIN32_RESOURCE%%", 0);
+	if (dbname == NULL)
+		goto error;
+
+	HRSRC res = FindResource(NULL, MAKEINTRESOURCE(MAGIC_MGC_RC), RT_RCDATA);
+	if (!res)
+		file_error(ms, 2, "cannot find resource: %d", GetLastError());
+
+	HGLOBAL res_handle = LoadResource(NULL, res);
+	if (!res_handle)
+		file_error(ms, 2, "cannot load resource: %d", GetLastError());
+
+	map->len  = CAST(size_t, SizeofResource(NULL, res));
+	map->type = MAP_TYPE_USER;
+	map->p    = (void *)LockResource(res_handle);
+
+	if (check_buffer(ms, map, dbname) != 0) {
+		goto error;
+	}
+
+	free(dbname);
+	return map;
+
+error:
+	apprentice_unmap(map);
+	free(dbname);
+	return rv;
+}
+#endif
+
 /*
  * handle a compiled file.
  */
@@ -3280,6 +3332,12 @@ apprentice_map(struct magic_set *ms, const char *fn)
 	char *dbname = NULL;
 	struct magic_map *map;
 	struct magic_map *rv = NULL;
+
+#ifdef MAGIC_RESOURCE
+	if (strcmp(fn, "%%WIN32_RESOURCE%%") == 0) {
+	    return apprentice_map_resource(ms);
+	}
+#endif
 
 	fd = -1;
 	if ((map = CAST(struct magic_map *, calloc(1, sizeof(*map)))) == NULL) {
