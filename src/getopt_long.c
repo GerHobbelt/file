@@ -89,7 +89,7 @@ __weak_alias(getopt_long, _getopt_long)
 
 #define	EMSG	""
 
-static int getopt_internal(int nargc, const char** nargv, const char* options);
+static int getopt_internal(int nargc, const char ** nargv, const char* options);
 static int gcd(int a, int b);
 static void permute_args(int panonopt_start, int panonopt_end, int opt_end, const char** nargv);
 
@@ -310,7 +310,7 @@ start:
  * [eventually this will replace the real getopt]
  */
 int
-getopt(int nargc, const char **nargv, const char *options)
+getopt(int nargc, const char ** nargv, const char *options)
 {
 	int retval;
 
@@ -341,7 +341,7 @@ getopt(int nargc, const char **nargv, const char *options)
  *	Parse argc/argv argument vector.
  */
 int
-getopt_long(int nargc, char * const *nargv, const char *options, const struct option *long_options, int *idx)
+getopt_long(int nargc, const char * const *nargv, const char *options, const struct option *long_options, int *idx)
 {
 	int retval;
 

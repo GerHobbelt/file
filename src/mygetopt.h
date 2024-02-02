@@ -64,7 +64,7 @@ struct option {
 	int val;
 };
 
-int getopt_long(int, char * const *, const char *,
-    const struct option *, int *);
+int
+getopt_long(int nargc, const char * const *nargv, const char *options, const struct option *long_options, int *idx);
 
 #endif /* !_GETOPT_H_ */

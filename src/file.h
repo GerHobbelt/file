@@ -618,10 +618,10 @@ file_protected int file_printf(struct magic_set *, const char *, ...)
 file_protected int file_reset(struct magic_set *, int);
 file_protected int file_tryelf(struct magic_set *, const struct buffer *);
 file_protected int file_trycdf(struct magic_set *, const struct buffer *);
-#if HAVE_FORK
+//#if HAVE_FORK
 file_protected int file_zmagic(struct magic_set *, const struct buffer *,
     const char *);
-#endif
+//#endif
 file_protected int file_ascmagic(struct magic_set *, const struct buffer *,
     int);
 file_protected int file_ascmagic_with_encoding(struct magic_set *,
