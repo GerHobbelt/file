@@ -1,4 +1,6 @@
+#ifndef VERSION       // clashes with config.h from libgd when we build that library and use the GNU file / libmagic portability layer code there...
 #define VERSION "100"
+#endif
 #define BUILTIN_ELF
 /* #undef BZLIBSUPPORT */
 #define ELFCORE
@@ -16,7 +18,7 @@
 /* #undef HAVE_GETLINE */
 /* #undef HAVE_GETOPT_H */
 /* #undef HAVE_GMTIME_R */
-#define HAVE_INTTYPES_H
+#define HAVE_INTTYPES_H         1
 /* #undef HAVE_LIBSECCOMP */
 /* #undef HAVE_LOCALTIME_R */
 /* #undef HAVE_LZMA_H */
@@ -47,7 +49,7 @@
 /* #undef HAVE_SYS_MMAN_H */
 /* #undef HAVE_SYS_SYSMACROS_H */
 /* #undef HAVE_SYS_TIME_H */
-#define HAVE_SYS_TYPES_H
+#define HAVE_SYS_TYPES_H          1
 #define HAVE_SYS_UTIME_H
 /* #undef HAVE_SYS_WAIT_H */
 /* #undef HAVE_UNISTD_H */

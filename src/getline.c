@@ -92,7 +92,7 @@ getline(char **buf, size_t *bufsiz, FILE *fp)
 
 #ifdef TEST
 int
-main(int argc, char *argv[])
+main(void)
 {
 	char *p = NULL;
 	ssize_t len;

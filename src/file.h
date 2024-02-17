@@ -727,7 +727,7 @@ size_t strlcat(char *, const char *, size_t);
 char *strcasestr(const char *, const char *);
 #endif
 #ifndef HAVE_GETLINE
-ssize_t getline(char **, size_t *, FILE *);
+ssize_t getline(char **buf, size_t *bufsiz, FILE *fp);
 ssize_t getdelim(char **, size_t *, int, FILE *);
 #endif
 #ifndef HAVE_CTIME_R
