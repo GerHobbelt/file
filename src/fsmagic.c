@@ -131,7 +131,7 @@ file_fsmagic(struct magic_set *ms, const char *fn, struct stat *sb)
 
 #ifdef _WIN32
 	{
-		HANDLE hFile = CreateFile((LPCSTR)fn, 0, FILE_SHARE_DELETE |
+		HANDLE hFile = CreateFileA(fn, 0, FILE_SHARE_DELETE |
 		    FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,
 		    NULL);
 		if (hFile != INVALID_HANDLE_VALUE) {
