@@ -22,7 +22,7 @@
 /* #undef HAVE_LIBSECCOMP */
 /* #undef HAVE_LOCALTIME_R */
 /* #undef HAVE_LZMA_H */
-#define HAVE_MBRTOWC
+#define HAVE_MBRTOWC   1
 /* #undef HAVE_MEMMEM */
 /* #undef HAVE_MKSTEMP */
 /* #undef HAVE_MMAP */
@@ -34,7 +34,7 @@
 /* #undef HAVE_SYS_BSWAP_H */
 /* #undef HAVE_SIG_T */
 /* #undef HAVE_SPAWN_H */
-/* #undef HAVE_REGEX_H */
+#define HAVE_REGEX_H    1   /* by way of TRE */
 /* #undef HAVE_STRCASESTR */
 /* #undef HAVE_STRLCAT */
 /* #undef HAVE_STRLCPY */
@@ -58,8 +58,8 @@
 /* #undef HAVE_UTIMES */
 /* #undef HAVE_UTIME_H */
 /* #undef HAVE_VASPRINTF */
-#define HAVE_WCHAR_H
-#define HAVE_WCTYPE_H
+#define HAVE_WCHAR_H    1
+#define HAVE_WCTYPE_H    1
 /* #undef HAVE_WCWIDTH */
 /* #undef HAVE_XLOCALE_H */
 /* #undef HAVE_ZLIB_H */

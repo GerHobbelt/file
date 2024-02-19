@@ -334,7 +334,7 @@ int cdf_print_elapsed_time(char *, size_t, cdf_timestamp_t);
 uint16_t cdf_tole2(uint16_t);
 uint32_t cdf_tole4(uint32_t);
 uint64_t cdf_tole8(uint64_t);
-char *cdf_ctime(const time_t *, char *);
+char *cdf_ctime(const time_t, char *);
 char *cdf_u16tos8(char *, size_t, const uint16_t *);
 
 #ifdef CDF_DEBUG

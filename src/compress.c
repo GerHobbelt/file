@@ -1055,17 +1055,17 @@ file_private int
 uncompressbuf(int fd, size_t bytes_max, size_t method, int nofork,
     const unsigned char *old, unsigned char **newch, size_t* n)
 {
-	int fdp[3][2];
+#if defined(HAVE_FORK)
 	int status, rv, w;
-#ifdef HAVE_FORK
+	int fdp[3][2];
 	pid_t pid;
 	pid_t writepid = -1;
-#endif
 	size_t i;
-	ssize_t r, re;
-	char *const *args;
+	ssize_t re, r;
+	char* const* args;
 #ifdef HAVE_POSIX_SPAWNP
 	posix_spawn_file_actions_t fa;
+#endif
 #endif
 	int (*decompress)(const unsigned char *, unsigned char **,
 	    size_t, size_t *, int) = getdecompressor(method);

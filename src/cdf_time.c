@@ -166,17 +166,17 @@ cdf_timespec_to_timestamp(cdf_timestamp_t *t, const struct timespec *ts)
 }
 
 char *
-cdf_ctime(const time_t *sec, char *buf)
+cdf_ctime(const time_t sec, char *buf)
 {
-	char *ptr = *sec > MAX_CTIME ? NULL : ctime_r(sec, buf);
+	char *ptr = sec > MAX_CTIME ? NULL : ctime_r(&sec, buf);
 	if (ptr != NULL)
 		return buf;
 #ifdef _WIN32
 	(void)snprintf(buf, 26, "*Bad* 0x%16.16I64x\n",
-	    CAST(long long, *sec));
+	    CAST(long long, sec));
 #else
 	(void)snprintf(buf, 26, "*Bad* %#16.16" INT64_T_FORMAT "x\n",
-	    CAST(long long, *sec));
+	    CAST(long long, sec));
 #endif
 	return buf;
 }
@@ -184,7 +184,7 @@ cdf_ctime(const time_t *sec, char *buf)
 
 #ifdef TEST_TIME
 int
-main(int argc, char *argv[])
+main(void)
 {
 	struct timespec ts;
 	char buf[25];
@@ -193,7 +193,7 @@ main(int argc, char *argv[])
 	char *p, *q;
 
 	cdf_timestamp_to_timespec(&ts, tst);
-	p = cdf_ctime(&ts.tv_sec, buf);
+	p = cdf_ctime(ts.tv_sec, buf);
 	if ((q = strchr(p, '\n')) != NULL)
 		*q = '\0';
 	if (strcmp(ref, p) != 0)

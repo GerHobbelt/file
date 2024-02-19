@@ -1452,10 +1452,10 @@ cdf_dump_dir(const cdf_info_t *info, const cdf_header_t *h,
 		(void)fprintf(stderr, "Right child: %d\n", d->d_right_child);
 		(void)fprintf(stderr, "Flags: %#x\n", d->d_flags);
 		cdf_timestamp_to_timespec(&ts, d->d_created);
-		(void)fprintf(stderr, "Created %s", cdf_ctime(&ts.tv_sec, buf));
+		(void)fprintf(stderr, "Created %s", cdf_ctime(ts.tv_sec, buf));
 		cdf_timestamp_to_timespec(&ts, d->d_modified);
 		(void)fprintf(stderr, "Modified %s",
-		    cdf_ctime(&ts.tv_sec, buf));
+		    cdf_ctime(ts.tv_sec, buf));
 		(void)fprintf(stderr, "Stream %d\n", d->d_stream_first_sector);
 		(void)fprintf(stderr, "Size %d\n", d->d_size);
 		switch (d->d_type) {
@@ -1536,7 +1536,7 @@ cdf_dump_property_info(const cdf_property_info_t *info, size_t count)
 				char tbuf[26];
 				cdf_timestamp_to_timespec(&ts, tp);
 				(void)fprintf(stderr, "timestamp %s",
-				    cdf_ctime(&ts.tv_sec, tbuf));
+				    cdf_ctime(ts.tv_sec, tbuf));
 			}
 			break;
 		case CDF_CLIPBOARD:
@@ -1589,7 +1589,7 @@ cdf_dump_catalog(const cdf_header_t *h, const cdf_stream_t *sst)
 		cdf_timestamp_to_timespec(&ts, ce[i].ce_timestamp);
 		printf("\t%d %s %s", ce[i].ce_num,
 		    cdf_u16tos8(sbuf, ce[i].ce_namlen, ce[i].ce_name),
-		    cdf_ctime(&ts.tv_sec, tbuf));
+		    cdf_ctime(ts.tv_sec, tbuf));
 	}
 	free(cat);
 }

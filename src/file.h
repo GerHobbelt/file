@@ -41,37 +41,14 @@
 #endif
 
 #include <io.h>
+#include <stdint.h>
 
-typedef long int ssize_t;
-typedef struct regex regex_t;
+typedef int64_t ssize_t;
 typedef int mode_t;
-typedef struct regmatch regmatch_t;
-
-#define REG_EXTENDED 1
-#define REG_NOSUB 2
-#define REG_NEWLINE 4
-#define REG_ICASE 8
-
-#define REG_NOMATCH -1
-
-#define R_OK 0
-#define W_OK 0
-#define X_OK 0
 
 #define S_ISREG(x) 0
 #define S_ISDIR(x) 0
 #define S_ISFIFO(x) 0
-
-struct regex
-{
-	int a;
-};
-struct regmatch
-{
-	int a;
-	int rm_so;
-	int rm_eo;
-};
 
 #if defined(BUILD_MONOLITHIC)
 #include <mupdf/fitz/getopt.h>
@@ -128,9 +105,34 @@ struct regmatch
 #include <stdio.h>	/* Include that here, to make sure __P gets defined */
 #include <errno.h>
 #include <fcntl.h>	/* For open and flags */
+
 #ifdef HAVE_REGEX_H
 #include <regex.h>
+#elif defined(_WIN32)
+
+typedef struct regex regex_t;
+typedef struct regmatch regmatch_t;
+
+#define REG_EXTENDED 1
+#define REG_NOSUB 2
+#define REG_NEWLINE 4
+#define REG_ICASE 8
+
+#define REG_NOMATCH -1
+
+struct regex
+{
+	int a;
+};
+struct regmatch
+{
+	int a;
+	int rm_so;
+	int rm_eo;
+};
+
 #endif
+
 #include <time.h>
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -550,7 +552,6 @@ struct cont {
 #ifdef _MSC_VER
 #include <BaseTsd.h>
 typedef int mode_t;
-typedef SSIZE_T ssize_t;
 #endif
 
 struct magic_set {

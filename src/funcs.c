@@ -45,6 +45,7 @@ FILE_RCSID("@(#)$File: funcs.c,v 1.142 2023/07/30 14:41:14 christos Exp $")
 #if defined(HAVE_WCTYPE_H)
 #include <wctype.h>
 #endif
+#include <regex.h>
 #include <limits.h>
 
 #ifndef SIZE_MAX

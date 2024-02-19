@@ -30,6 +30,9 @@ FILE_RCSID("@(#)$File: readcdf.c,v 1.80 2023/01/24 20:13:40 christos Exp $")
 #endif
 
 #include <assert.h>
+#ifdef CDF_DEBUG
+#include <err.h>
+#endif
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -37,6 +40,21 @@ FILE_RCSID("@(#)$File: readcdf.c,v 1.80 2023/01/24 20:13:40 christos Exp $")
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
+#include <limits.h>
+#ifdef HAVE_BYTESWAP_H
+#include <byteswap.h>
+#endif
+#ifdef HAVE_SYS_BSWAP_H
+#include <sys/bswap.h>
+#endif
+
+#ifndef EFTYPE
+#define EFTYPE EINVAL
+#endif
+
+#ifndef SIZE_T_MAX
+#define SIZE_T_MAX CAST(size_t, ~0ULL)
+#endif
 
 #include "cdf.h"
 #include "magic.h"
@@ -238,7 +256,7 @@ cdf_file_property_info(struct magic_set *ms, const cdf_property_info_t *info,
 				} else {
 					char *c, *ec;
 					cdf_timestamp_to_timespec(&ts, tp);
-					c = cdf_ctime(&ts.tv_sec, tbuf);
+					c = cdf_ctime(ts.tv_sec, tbuf);
 					if (c != NULL &&
 					    (ec = strchr(c, '\n')) != NULL)
 						*ec = '\0';
