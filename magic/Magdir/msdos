@@ -1,6 +1,6 @@
 
 #------------------------------------------------------------------------------
-# $File: msdos,v 1.197 2024/02/29 03:42:40 christos Exp $
+# $File: msdos,v 1.201 2024/03/10 21:10:37 christos Exp $
 # msdos:  file(1) magic for MS-DOS files
 #
 
@@ -497,12 +497,22 @@
 >>>>>>(0x3c.l+0x3F)	ubyte		<3
 >>>>>>>(0x3c.l+0x37)	byte&0x04	0	(real mode only)
 >>>>>>>(0x3c.l+0x37)	byte&0x04	!0	(real+protected mode)
+>>>>>>(0x3c.l+0x3E)	ushort		=0x0300
+>>>>>>>(0x3c.l+0x0c)	ubyte&0x08	0	(real+protected mode)
+>>>>>>>(0x3c.l+0x0c)	ubyte&0x08	!0	(protected mode only)
 >>>>>(0x3c.l+0x3E)	ushort		0
->>>>>>(0x3c.l+0x2a)	leshort		!0
->>>>>>>&(&-2.s-0x2a)	search/512/C	DOSCALLS for OS/2 1.x
->>>>>>>&(&-2.s-0x2a)	default		x for MS Windows 1.x/2.x
->>>>>>>>(0x3c.l+0x37)	byte&0x04	0	(real mode only)
->>>>>>>>(0x3c.l+0x37)	byte&0x04	!0	(real+protected mode)
+>>>>>>(0x3c.l+0x2a)	leshort		0 for OS/2 1.x or MS Windows 1.x/2.x
+>>>>>>(0x3c.l+0x2a)	default		x
+# Binaries with DOSCALLS import library are for OS/2
+>>>>>>>&(&0.s-0x29)	search/512/C	\x08DOSCALLS for OS/2 1.x
+>>>>>>>(0x3c.l+0x2a)	default		x
+# Binaries with KERNEL, USER or GDI import library are for Windows
+# FIXME: names are prefixed by its length, but regex type does not support binary bytes
+>>>>>>>>&(&0.s-0x29)	regex/512/C	KERNEL|USER|GDI for MS Windows 1.x/2.x
+>>>>>>>>>(0x3c.l+0x37)	byte&0x04	0	(real mode only)
+>>>>>>>>>(0x3c.l+0x37)	byte&0x04	!0	(real+protected mode)
+# Binaries without any of those import library can be for any OS
+>>>>>>>>(0x3c.l+0x2a)	default		x for OS/2 1.x or MS Windows 1.x/2.x
 >>>>(0x3c.l+0x36)	byte		1 for OS/2 1.x
 >>>>(0x3c.l+0x36)	byte		2 for MS Windows
 # expctwinver; expected Windows version (minor first) like:
@@ -515,6 +525,9 @@
 >>>>>(0x3c.l+0x3F)	ubyte		<3
 >>>>>>(0x3c.l+0x37)	byte&0x04	0	(real mode only)
 >>>>>>(0x3c.l+0x37)	byte&0x04	!0	(real+protected mode)
+>>>>>(0x3c.l+0x3E)	ushort		=0x0300
+>>>>>>(0x3c.l+0x0c)	ubyte&0x08	0	(real+protected mode)
+>>>>>>(0x3c.l+0x0c)	ubyte&0x08	!0	(protected mode only)
 # OS 3 was reserved for Multitasking MS-DOS but it never used NE version 5+ (only NE version 4)
 #>>>>(0x3c.l+0x36)	byte		3 for Multitasking MS-DOS
 # OS 4 was reserved for MS Windows/386 device drivers but MS Windows/386 2.x never used NE format (Xenix x.out format was used instead)
@@ -574,16 +587,20 @@
 >>>>(0x3c.l+0x3F)	ubyte		=3
 >>>>>0x3c		ulelong		>0x800
 >>>>>>(0x3c.l+0x37)	ubyte		&0x80	with OS/2 WLO loader
-# Detection for NE versions <5. These versions are used only by WINE, Windows 1.x/2.x and Multitasking MS-DOS
+# Detection for NE versions <5 which do not have OS type byte 0x36
+# These versions are used only by WINE, Windows 1.x/2.x and Multitasking MS-DOS
 # WINE binaries have special signature after the dos header (at fixed offset 0x40)
 # Multitasking MS-DOS binaries imports DOSCALLS library, so use it for distinguishing
+# Import libraries are part of the string table which starts one byte after the
+# 16-bit indirect offset 0x2a relative to the beginning of NE header, and consist
+# of concatenated pascal strings (first byte of the string is its length)
 >>>(0x3c.l+0x02)	ubyte		<5
 # like: fakedlls/krnl386.exe16 fakedlls/gdi.exe16 fakedlls/winsock.dll16 fakedlls/winoldap.mod16 fakedlls/mouse.drv16
 >>>>0x40		string		Wine\ placeholder\ DLL for WINE stub
 >>>>(0x3c.l+0x2a)	default		x
 # like: HE_DAEM.EXE POPUP.EXE QUEUER.EXE
->>>>>&(&0.s-0x2a)	search/512/C	DOSCALLS for Multitasking MS-DOS
->>>>>&(&0.s-0x2a)	default		x for MS Windows 1.x/2.x
+>>>>>&(&0.s-0x29)	search/512/C	\x08DOSCALLS for Multitasking MS-DOS
+>>>>>(0x3c.l+0x2a)	default		x for MS Windows 1.x/2.x
 # Special case, Windows 3.x OS parse from NE version 4 binaries also following NE version 5 fields:
 # - os type if is 0 or 2
 # - bits proportional fonts and protected mode
@@ -774,6 +791,8 @@
 >>>>>&-2	use	mz-next-overlay
 >>>>>&-2	string	BW
 >>>>>>0		use	mz-bw-collection
+>>>>>&-2	string	3P
+>>>>>>0		use	mz-3p
 >>>>0		default	x
 >>>>>0		use	mz-unrecognized
 >>>0		default	x
@@ -783,6 +802,8 @@
 >>>>&-2		use	mz-next-overlay
 >>>>&-2		string	BW
 >>>>>0		use	mz-bw-collection
+>>>>&-2	string	3P
+>>>>>0		use	mz-3p
 >>>0		default	x
 >>>>0		use	mz-unrecognized
 
@@ -932,7 +953,15 @@
 >0	string	P2	\b, EXP (P2) for MS-DOS, Phar Lap 286 DOS extender
 >0	string	P3	\b, EXP (P3) for MS-DOS, Phar Lap 386 DOS extender
 >0	string	MT	\b, MT for MS-DOS, IGC XMLOD i386 DOS extender
->0	string	3P	\b, 3P for MS-DOS, CauseWay 3P-format library
+>0	string	3P	\b, 3P for MS-DOS
+# Other 3P details are printed later as they depend on the original MZ content
+>>32	lelong&0x00000001	!0	\b, 16-bit
+>>32	lelong&0x00000001	0
+# CWC.EXE from cw349bin.zip is 32-bit
+>>>32	lelong&0x00010000	0	\b, 32-bit
+# WL32.EXE from cw349bin.zip is dual mode
+>>>32	lelong&0x00010000	!0	\b, Dual mode
+>>32	lelong&0x80000000	!0	\b, Compressed
 >0	string	D3X1	\b, D3X1 for MS-DOS, D3X DOS extender
 # BW details are printed later as they depend on the original MZ content
 >0	string	BW	\b, BW collection for MS-DOS
@@ -1003,6 +1032,14 @@
 >>>&-8	string	DOS/4G	\b, DOS/4G DOS extender (embedded)
 >>>0		default	x
 >>>>(8.s*16)	search/0x4000	Stub\ failed\ to\ find\ DOS/4G\ extender.	\b, DOS/4G DOS extender (stub)
+
+
+# This named instance is called for CauseWay MZ 3P binary with offset from the beginning of the file
+0	name	mz-3p
+# CWC.EXE and WL32.EXE from cw349bin.bin
+>0x440	search/0x100	CauseWay\ DOS\ Extender			\b, CauseWay DOS extender
+# CWHELP.EXE from cw349bin.bin
+>0x200	search/0x100	CauseWay\ dynamic\ link\ library	\b, CauseWay DLL
 
 
 # Summary:	OS/2 LX Library and device driver (no DOS stub)
@@ -2318,7 +2355,13 @@
 #>>87	ubequad x			SharewareData=%#16.16llx
 
 # old binary Microsoft (.HLP) files added by Joerg Jenderek from http://file-extension.net/seeker/file_extension_hlp
-0	ulequad	0x3a000000024e4c	MS Advisor help file
+# URL:		http://fileformats.archiveteam.org/wiki/Microsoft_Advisor_Help
+# Reference:	http://mark0.net/download/triddefs_xml.7z/defs/h/hlp-ms-adv.trid.xml
+# Note:		called "Microsoft Advisor Help" by TrID
+0	ulequad&0xFFffFFfeFFffFFff	0x003a000000024e4c	MS Advisor help file
+#!:mime								application/octet-stream
+!:mime								application/x-ms-hlp
+!:ext								hlp
 
 # HtmlHelp files (.chm)
 0	string/b	ITSF\003\000\000\000\x60\000\000\000	MS Windows HtmlHelp Data
