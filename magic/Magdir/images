@@ -1,6 +1,6 @@
 
 #------------------------------------------------------------------------------
-# $File: images,v 1.254 2024/07/07 14:36:49 christos Exp $
+# $File: images,v 1.256 2024/08/27 19:17:10 christos Exp $
 # images:  file(1) magic for image formats (see also "iff", and "c-lang" for
 # XPM bitmaps)
 #
@@ -2660,7 +2660,6 @@
 >>0	use	ulead-imaginfo
 # From:		Joerg Jenderek
 # Reference:	http://mark0.net/download/triddefs_xml.7z/defs/p/pe4-imaginfo.trid.xml
-11	string	\001\0\0\0\0
 # check for version 4 part
 >19	string	\0\0\0\004\0
 >>0	use	ulead-imaginfo
@@ -3281,6 +3280,10 @@
 >>0x10	ubelong	!0x44445320		Sega PVR image:
 >>>0x10	use	sega-pvr-image-header
 >>0x08	ulelong	x	\b, global index = %u
+# Sega GVR image with GBIX.
+>0x10	string	GVRT	Sega GVR image:
+>>0x10	use	sega-gvr-image-header
+>>0x08	ubelong	x	\b, global index = %u
 
 # Sega GVR header.
 0	name	sega-gvr-image-header
@@ -3301,12 +3304,6 @@
 # Sega GVR image.
 0	string	GVRT	Sega GVR image:
 >0x10	use	sega-gvr-image-header
-
-# Sega GVR image with GBIX.
-0	string	GBIX
->0x10	string	GVRT	Sega GVR image:
->>0x10	use	sega-gvr-image-header
->>0x08	ubelong	x	\b, global index = %u
 
 # Sega GVR image with GCIX. (Wii)
 0	string	GCIX
@@ -3815,9 +3812,7 @@
 >>>>33		string	and
 >>>>>37		string	layers
 >>>>>>43	ulelong	x	reMarkable tablet notebook lines, 1404 x 1872, %x page(s)
-
 # newer per-page files for the reMarkable
-0		string	reMarkable
 >11		string	.lines
 >>18		string	file,
 >>>24		string	version=
