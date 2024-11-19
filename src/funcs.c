@@ -67,6 +67,8 @@ file_copystr(char *buf, size_t blen, size_t width, const char *str)
 file_private void
 file_clearbuf(struct magic_set *ms)
 {
+    if (!ms->o.pbuf)
+        return;
 	free(ms->o.buf);
 	ms->o.buf = NULL;
 	ms->o.blen = 0;
@@ -520,10 +522,6 @@ file_reset(struct magic_set *ms, int checkloaded)
 		return -1;
 	}
 	file_clearbuf(ms);
-	if (ms->o.pbuf) {
-		free(ms->o.pbuf);
-		ms->o.pbuf = NULL;
-	}
 	ms->event_flags &= ~EVENT_HAD_ERR;
 	ms->error = -1;
 	return 0;
