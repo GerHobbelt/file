@@ -79,20 +79,11 @@ typedef int mode_t;
 #endif
 
 #ifdef _WIN32
+# define SIZE_T_FORMAT "z"
 # ifdef PRIu32
-#  ifdef _WIN64
-#   define SIZE_T_FORMAT PRIu64
-#  else
-#   define SIZE_T_FORMAT PRIu32
-#  endif
 #  define INT64_T_FORMAT PRIi64
 #  define INTMAX_T_FORMAT PRIiMAX
 # else
-#  ifdef _WIN64
-#   define SIZE_T_FORMAT "I64"
-#  else
-#   define SIZE_T_FORMAT ""
-#  endif
 #  define INT64_T_FORMAT "I64"
 #  define INTMAX_T_FORMAT "I64"
 # endif
