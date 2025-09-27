@@ -27,21 +27,15 @@
 #include "file.h"
 
 #ifndef	lint
-FILE_RCSID("@(#)$File: seccomp.c,v 1.32 2025/09/06 16:54:59 christos Exp $")
+FILE_RCSID("@(#)$File: seccomp.c,v 1.34 2025/09/08 13:16:48 christos Exp $")
 #endif	/* lint */
 
 #if HAVE_LIBSECCOMP
 #include <seccomp.h> /* libseccomp */
 #include <sys/prctl.h> /* prctl */
 #include <sys/socket.h>
-#ifdef __powerpc64__
 // See: https://sourceware.org/bugzilla/show_bug.cgi?id=32806
-# include <asm/termbits.h>
-#elif defined __linux__
-# include <linux/termios.h>
-#else
-# include <termios.h>
-#endif
+#include <asm/termbits.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <stdlib.h>
